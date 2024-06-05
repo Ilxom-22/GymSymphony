@@ -1,7 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy ASP.Net Core app to Azure Web App - Gymphony
+name: Build and deploy ASP.Net Core app to Azure Web App - IdentityAuthorization
 
 on:
   push:
@@ -9,58 +6,36 @@ on:
       - main
   workflow_dispatch:
 
+env:
+  AZURE_WEBAPP_NAME: 'Gymphony'
+  AZURE_WEBAPP_PACKAGE_PATH: "./publish"
+  DOTNET_VERSION: '8.0.x'
+  APPLICATION_SOLUTION_FILE: ./src/Gymphony.Backend/Gymphony.sln
+
 jobs:
-  build:
+  build_and_deploy:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
 
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v1
+      - name: Setup .NET Core application
+        uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.x'
-          include-prerelease: true
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+      - name: Restore
+        run: dotnet restore ${{ env.APPLICATION_SOLUTION_FILE }}
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      - name: Build
+        run: dotnet build ${{ env.APPLICATION_SOLUTION_FILE }} --configuration Release --no-restore
+        
+      - name: Publish
+        run: dotnet publish ${{ env.APPLICATION_SOLUTION_FILE }} --configuration Release --no-build --output ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
-        with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
-
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
-
-    steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v3
-        with:
-          name: .net-app
-      
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_D77E0BD3478645A494BC24EC8E1A0914 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F36437562C524AA9A94EDACA39612DF4 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_05668A033E48491398B753AB84C439B2 }}
-
-      - name: Deploy to Azure Web App
-        id: deploy-to-webapp
+      - name: Deploy
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'Gymphony'
-          slot-name: 'Production'
-          package: .
-          
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
