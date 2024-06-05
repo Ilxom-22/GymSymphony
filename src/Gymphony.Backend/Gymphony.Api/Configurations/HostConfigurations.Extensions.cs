@@ -1,3 +1,8 @@
+using System.Reflection.Metadata;
+using Gymphony.Persistence.DataContexts;
+using Gymphony.Persistence.Extensions;
+using Microsoft.EntityFrameworkCore;
+
 namespace Gymphony.Api.Configurations;
 
 public static partial class HostConfigurations
@@ -16,6 +21,25 @@ public static partial class HostConfigurations
         builder.Services.AddControllers();
 
         return builder;
+    }
+
+    private static WebApplicationBuilder AddPersistence(this WebApplicationBuilder builder)
+    { 
+        var dbConnectionString = builder.Environment.IsDevelopment()
+            ? builder.Configuration.GetConnectionString("DbConnectionString")
+            : Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_DbConnectionString");
+
+        builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(dbConnectionString));
+        
+        return builder;
+    }
+    
+    private static async ValueTask<WebApplication> MigrateDatabaseSchemaAsync(this WebApplication app)
+    {
+        var serviceScopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
+        await serviceScopeFactory.MigrateAsync<AppDbContext>();
+        
+        return app;
     }
     
     private static WebApplication UseDevTools(this WebApplication app)
