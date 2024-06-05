@@ -3,7 +3,7 @@ name: Build and deploy ASP.Net Core app to Azure Web App - IdentityAuthorization
 on:
   push:
     branches:
-      - feature/#1
+      - main
   workflow_dispatch:
 
 env:
