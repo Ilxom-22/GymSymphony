@@ -6,17 +6,20 @@ public static partial class HostConfigurations
     {
         builder
             .AddDevTools()
-            .AddExposers();
+            .AddExposers()
+            .AddPersistence();
         
         return builder;
     }
 
-    public static WebApplication Configure(this WebApplication app)
+    public static async ValueTask<WebApplication> ConfigureAsync(this WebApplication app)
     {
         app
             .UseDevTools()
             .UseExposers();
-        
+
+        await app.MigrateDatabaseSchemaAsync();
+
         return app;
     }
 }
