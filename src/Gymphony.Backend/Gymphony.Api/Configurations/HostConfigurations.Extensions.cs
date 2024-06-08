@@ -1,5 +1,6 @@
 using System.Reflection;
 using Gymphony.Application.Common.EventBus.Brokers;
+using Gymphony.Application.Identity.Brokers;
 using Gymphony.Infrastructure.Common.EventBus.Brokers;
 using Gymphony.Persistence.DataContexts;
 using Gymphony.Persistence.Extensions;
@@ -55,6 +56,15 @@ public static partial class HostConfigurations
     {
         builder.Services.AddSingleton<IEventBusBroker, EventBusBroker>();
 
+        return builder;
+    }
+
+    private static WebApplicationBuilder AddRequestContextTools(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddHttpContextAccessor();
+
+        builder.Services.AddScoped<IRequestContextProvider, IRequestContextProvider>();
+        
         return builder;
     }
     

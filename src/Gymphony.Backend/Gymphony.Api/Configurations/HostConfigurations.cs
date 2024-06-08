@@ -9,7 +9,8 @@ public static partial class HostConfigurations
             .AddExposers()
             .AddPersistence()
             .AddMediator()
-            .AddEventBus();
+            .AddEventBus()
+            .AddRequestContextTools();
         
         return builder;
     }
