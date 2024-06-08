@@ -1,4 +1,4 @@
-using Gymphony.Application.Identity.Brokers;
+using Gymphony.Domain.Brokers;
 using Gymphony.Domain.Constants;
 using Microsoft.AspNetCore.Http;
 

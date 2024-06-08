@@ -1,4 +1,4 @@
-namespace Gymphony.Application.Identity.Brokers;
+namespace Gymphony.Domain.Brokers;
 
 public interface IRequestContextProvider
 {
