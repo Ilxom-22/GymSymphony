@@ -2,7 +2,7 @@ using Gymphony.Domain.Brokers;
 using Gymphony.Domain.Constants;
 using Microsoft.AspNetCore.Http;
 
-namespace Gymphony.Infrastructure.Identity.Brokers;
+namespace Gymphony.Infrastructure.Common.Identity.Brokers;
 
 public class RequestContextProvider(IHttpContextAccessor httpContextAccessor) : IRequestContextProvider
 {
