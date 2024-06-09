@@ -10,7 +10,8 @@ public static partial class HostConfigurations
             .AddPersistence()
             .AddMediator()
             .AddEventBus()
-            .AddRequestContextTools();
+            .AddRequestContextTools()
+            .AddUsersInfrastructure();
         
         return builder;
     }

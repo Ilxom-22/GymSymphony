@@ -1,11 +1,13 @@
 using System.Reflection;
 using Gymphony.Application.Common.EventBus.Brokers;
 using Gymphony.Domain.Brokers;
-using Gymphony.Domain.Enums;
 using Gymphony.Infrastructure.Common.EventBus.Brokers;
+using Gymphony.Infrastructure.Identity.Brokers;
 using Gymphony.Persistence.DataContexts;
 using Gymphony.Persistence.Extensions;
 using Gymphony.Persistence.Interceptors;
+using Gymphony.Persistence.Repositories;
+using Gymphony.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gymphony.Api.Configurations;
@@ -78,7 +80,16 @@ public static partial class HostConfigurations
     {
         builder.Services.AddHttpContextAccessor();
 
-        builder.Services.AddScoped<IRequestContextProvider, IRequestContextProvider>();
+        builder.Services.AddScoped<IRequestContextProvider, RequestContextProvider>();
+        
+        return builder;
+    }
+
+    private static WebApplicationBuilder AddUsersInfrastructure(this WebApplicationBuilder builder)
+    {
+        builder.Services
+            .AddScoped<IAdminRepository, AdminRepository>()
+            .AddScoped<IMemberRepository, MemberRepository>();
         
         return builder;
     }
