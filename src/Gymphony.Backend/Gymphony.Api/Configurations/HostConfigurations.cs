@@ -7,7 +7,11 @@ public static partial class HostConfigurations
         builder
             .AddDevTools()
             .AddExposers()
-            .AddPersistence();
+            .AddPersistence()
+            .AddMediator()
+            .AddEventBus()
+            .AddRequestContextTools()
+            .AddUsersInfrastructure();
         
         return builder;
     }
