@@ -1,5 +1,7 @@
 using System.Linq.Expressions;
 using Gymphony.Domain.Common.Entities;
+using Gymphony.Domain.Common.Queries;
+using Gymphony.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gymphony.Persistence.Repositories;
@@ -8,16 +10,16 @@ public abstract class EntityRepositoryBase<TContext, TEntity>(TContext context)
     where TContext : DbContext 
     where TEntity : class, IEntity
 {
-    public IQueryable<TEntity> Get(
+    protected IQueryable<TEntity> Get(
         Expression<Func<TEntity, bool>>? predicate = default, 
-        bool asNoTracking = false)
+        QueryOptions queryOptions = default)
     {
         var query = context.Set<TEntity>().AsQueryable();
 
         if (predicate is not null)
             query = query.Where(predicate);
 
-        return asNoTracking ? query.AsNoTracking() : query;
+        return query.ApplyQueryOptions(queryOptions);
     }
 
     protected async ValueTask<TEntity> CreateAsync(
