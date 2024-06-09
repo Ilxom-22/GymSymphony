@@ -11,6 +11,8 @@ public static partial class HostConfigurations
             .AddMediator()
             .AddEventBus()
             .AddRequestContextTools()
+            .AddJwtAuthentication()
+            .AddIdentityInfrastructure()
             .AddUsersInfrastructure();
         
         return builder;

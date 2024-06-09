@@ -1,14 +1,20 @@
 using System.Reflection;
+using System.Text;
 using Gymphony.Application.Common.EventBus.Brokers;
+using Gymphony.Application.Common.Identity.Models.Settings;
+using Gymphony.Application.Common.Identity.Services;
 using Gymphony.Domain.Brokers;
 using Gymphony.Infrastructure.Common.EventBus.Brokers;
-using Gymphony.Infrastructure.Identity.Brokers;
+using Gymphony.Infrastructure.Common.Identity.Brokers;
+using Gymphony.Infrastructure.Common.Identity.Services;
 using Gymphony.Persistence.DataContexts;
 using Gymphony.Persistence.Extensions;
 using Gymphony.Persistence.Interceptors;
 using Gymphony.Persistence.Repositories;
 using Gymphony.Persistence.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Gymphony.Api.Configurations;
 
@@ -81,6 +87,46 @@ public static partial class HostConfigurations
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddScoped<IRequestContextProvider, RequestContextProvider>();
+        
+        return builder;
+    }
+    
+    private static WebApplicationBuilder AddJwtAuthentication(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddTransient<IAccessTokenGeneratorService, AccessTokenGeneratorService>();
+
+        builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(nameof(JwtSettings)));
+
+        var jwtSecretKey = (builder.Environment.IsDevelopment()
+            ? builder.Configuration["JwtSecretKey"]
+            : Environment.GetEnvironmentVariable("JwtSecretKey"))
+                ?? throw new InvalidOperationException("JwtSecretKey is not configured!");
+
+        builder.Services.Configure<JwtSecretKey>(
+            options => options.SecretKey = jwtSecretKey);
+        
+        var jwtSettings = builder.Configuration.GetSection(nameof(JwtSettings)).Get<JwtSettings>() ??
+                          throw new InvalidOperationException("JwtSettings is not configured.");
+
+        
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(
+                options =>
+                {
+                    options.RequireHttpsMetadata = false;
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = jwtSettings.ValidateIssuer,
+                        ValidIssuer = jwtSettings.ValidIssuer,
+                        ValidAudience = jwtSettings.ValidAudience,
+                        ValidateAudience = jwtSettings.ValidateAudience,
+                        ValidateLifetime = jwtSettings.ValidateLifetime,
+                        ValidateIssuerSigningKey = jwtSettings.ValidateIssuerSigningKey,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecretKey))
+                    };
+                }
+            );
         
         return builder;
     }
