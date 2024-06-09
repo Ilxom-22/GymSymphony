@@ -94,6 +94,14 @@ public static partial class HostConfigurations
         return builder;
     }
     
+    private static WebApplicationBuilder AddIdentityInfrastructure(this WebApplicationBuilder builder)
+    {
+        builder.Services
+            .AddTransient<IPasswordHasherService, PasswordHasherService>();
+        
+        return builder;
+    }
+    
     private static async ValueTask<WebApplication> MigrateDatabaseSchemaAsync(this WebApplication app)
     {
         var serviceScopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
