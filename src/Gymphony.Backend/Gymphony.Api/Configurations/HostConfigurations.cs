@@ -14,7 +14,8 @@ public static partial class HostConfigurations
             .AddJwtAuthentication()
             .AddIdentityInfrastructure()
             .AddUsersInfrastructure()
-            .AddValidators();
+            .AddValidators()
+            .AddMappers();
         
         return builder;
     }

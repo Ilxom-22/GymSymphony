@@ -166,6 +166,13 @@ public static partial class HostConfigurations
         
         return builder;
     }
+
+    private static WebApplicationBuilder AddMappers(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddAutoMapper(Assemblies);
+
+        return builder;
+    }
     
     private static async ValueTask<WebApplication> MigrateDatabaseSchemaAsync(this WebApplication app)
     {
