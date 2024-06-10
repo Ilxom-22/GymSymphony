@@ -4,5 +4,5 @@ namespace Gymphony.Application.Common.Identity.Services;
 
 public interface IAccessTokenGeneratorService
 {
-    string GetToken(User user);
+    AccessToken GetAccessToken(User user);
 }

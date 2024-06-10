@@ -15,8 +15,4 @@ public class JwtSettings
     public bool ValidateIssuerSigningKey { get; set; }
     
     public int ExpirationTimeInMinutes { get; set; }
-
-    public int RefreshTokenExpirationTimeInMinutes { get; set; }
-
-    public int RefreshTokenExtendedExpirationTimeInMinutes { get; set; }
 }

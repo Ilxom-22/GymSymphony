@@ -17,10 +17,18 @@ public class AccessTokenGeneratorService(
     private readonly JwtSettings _jwtSettings = jwtSettings.Value;
     private readonly JwtSecretKey _jwtSecretKey = jwtSecretKey.Value;
     
-    public string GetToken(User user)
+    public AccessToken GetAccessToken(User user)
     {
         var token = GenerateToken(user);
-        return new JwtSecurityTokenHandler().WriteToken(token);
+
+        var accessToken = new AccessToken
+        {
+            UserId = user.Id,
+            Token = new JwtSecurityTokenHandler().WriteToken(token),
+            ExpiryTime = DateTimeOffset.UtcNow.AddMinutes(_jwtSettings.ExpirationTimeInMinutes)
+        };
+
+        return accessToken;
     }
     
     private JwtSecurityToken GenerateToken(User user)
@@ -47,5 +55,6 @@ public class AccessTokenGeneratorService(
         [
             new Claim(ClaimTypes.Email, user.EmailAddress),
             new Claim(ClaimConstants.UserId, user.Id.ToString()),
+            new Claim(ClaimTypes.Role, user.Role.ToString())
         ];
 }
