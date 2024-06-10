@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text;
+using Gymphony.Api.Filters;
 using Gymphony.Application.Common.EventBus.Brokers;
 using Gymphony.Application.Common.Identity.Models.Settings;
 using Gymphony.Application.Common.Identity.Services;
@@ -38,7 +39,8 @@ public static partial class HostConfigurations
     private static WebApplicationBuilder AddExposers(this WebApplicationBuilder builder)
     {
         builder.Services.AddRouting(options => options.LowercaseUrls = true);
-        builder.Services.AddControllers();
+        builder.Services.AddControllers(configs => configs.Filters
+            .Add<AccessTokenValidationFilter>());
 
         return builder;
     }
