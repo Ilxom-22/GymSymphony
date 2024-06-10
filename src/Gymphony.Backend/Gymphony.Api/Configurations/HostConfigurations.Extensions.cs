@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text;
+using FluentValidation;
 using Gymphony.Api.Filters;
 using Gymphony.Application.Common.EventBus.Brokers;
 using Gymphony.Application.Common.Identity.Models.Settings;
@@ -155,6 +156,13 @@ public static partial class HostConfigurations
     {
         builder.Services
             .AddTransient<IPasswordHasherService, PasswordHasherService>();
+        
+        return builder;
+    }
+
+    private static WebApplicationBuilder AddValidators(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddValidatorsFromAssemblies(Assemblies);
         
         return builder;
     }

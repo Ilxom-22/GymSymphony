@@ -13,7 +13,8 @@ public static partial class HostConfigurations
             .AddRequestContextTools()
             .AddJwtAuthentication()
             .AddIdentityInfrastructure()
-            .AddUsersInfrastructure();
+            .AddUsersInfrastructure()
+            .AddValidators();
         
         return builder;
     }
