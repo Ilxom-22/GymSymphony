@@ -10,6 +10,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Admin> Admins => Set<Admin>();
 
     public DbSet<Member> Members => Set<Member>();
+
+    public DbSet<AccessToken> AccessTokens => Set<AccessToken>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
