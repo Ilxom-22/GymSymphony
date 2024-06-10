@@ -13,6 +13,8 @@ public abstract class User : AuditableSoftDeletedEntity
 
     public string EmailAddress { get; set; } = default!;
 
+    public AccountStatus Status { get; set; }
+
     public Provider AuthenticationProvider { get; set; }
 
     public string AuthDataHash { get; set; } = default!;
