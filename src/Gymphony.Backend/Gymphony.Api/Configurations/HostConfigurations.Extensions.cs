@@ -132,6 +132,8 @@ public static partial class HostConfigurations
         builder.Services
             .AddTransient<IAccessTokenGeneratorService, AccessTokenGeneratorService>()
             .AddTransient<IRefreshTokenGeneratorService, RefreshTokenGeneratorService>();
+
+        builder.Services.AddScoped<IAccessTokenRepository, AccessTokenRepository>();
         
         return builder;
     }
