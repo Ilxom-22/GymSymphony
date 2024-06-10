@@ -93,9 +93,10 @@ public static partial class HostConfigurations
     
     private static WebApplicationBuilder AddJwtAuthentication(this WebApplicationBuilder builder)
     {
-        builder.Services.AddTransient<IAccessTokenGeneratorService, AccessTokenGeneratorService>();
-
         builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(nameof(JwtSettings)));
+
+        builder.Services.Configure<RefreshTokenSettings>(
+            builder.Configuration.GetSection(nameof(RefreshTokenSettings)));
 
         var jwtSecretKey = (builder.Environment.IsDevelopment()
             ? builder.Configuration["JwtSecretKey"]
@@ -127,6 +128,10 @@ public static partial class HostConfigurations
                     };
                 }
             );
+        
+        builder.Services
+            .AddTransient<IAccessTokenGeneratorService, AccessTokenGeneratorService>()
+            .AddTransient<IRefreshTokenGeneratorService, RefreshTokenGeneratorService>();
         
         return builder;
     }
