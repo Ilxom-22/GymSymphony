@@ -12,6 +12,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<Member> Members => Set<Member>();
 
     public DbSet<AccessToken> AccessTokens => Set<AccessToken>();
+
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
