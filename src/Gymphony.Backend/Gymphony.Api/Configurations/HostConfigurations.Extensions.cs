@@ -1,4 +1,6 @@
-using System.Reflection.Metadata;
+using System.Reflection;
+using Gymphony.Application.Common.EventBus.Brokers;
+using Gymphony.Infrastructure.Common.EventBus.Brokers;
 using Gymphony.Persistence.DataContexts;
 using Gymphony.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +9,13 @@ namespace Gymphony.Api.Configurations;
 
 public static partial class HostConfigurations
 {
+    private static readonly ICollection<Assembly> Assemblies = Assembly
+        .GetExecutingAssembly()
+        .GetReferencedAssemblies()
+        .Select(Assembly.Load)
+        .Append(Assembly.GetExecutingAssembly())
+        .ToList();
+    
     private static WebApplicationBuilder AddDevTools(this WebApplicationBuilder builder)
     {
         builder.Services.AddEndpointsApiExplorer();
@@ -31,6 +40,21 @@ public static partial class HostConfigurations
 
         builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(dbConnectionString));
         
+        return builder;
+    }
+
+    private static WebApplicationBuilder AddMediator(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddMediatR(conf 
+            => {conf.RegisterServicesFromAssemblies(Assemblies.ToArray());});
+        
+        return builder;
+    }
+
+    private static WebApplicationBuilder AddEventBus(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddSingleton<IEventBusBroker, EventBusBroker>();
+
         return builder;
     }
     
