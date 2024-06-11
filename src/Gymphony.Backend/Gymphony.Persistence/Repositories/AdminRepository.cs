@@ -3,6 +3,7 @@ using Gymphony.Domain.Common.Queries;
 using Gymphony.Domain.Entities;
 using Gymphony.Persistence.DataContexts;
 using Gymphony.Persistence.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gymphony.Persistence.Repositories;
 
@@ -15,6 +16,15 @@ public class AdminRepository(AppDbContext dbContext) :
         QueryOptions queryOptions = default)
     {
         return base.Get(predicate, queryOptions);
+    }
+
+    public async ValueTask<Admin?> GetByIdAsync(
+        Guid adminId, 
+        QueryOptions queryOptions = default,
+        CancellationToken cancellationToken = default)
+    {
+        return await base.Get(admin => admin.Id == adminId, queryOptions)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 
     public new ValueTask<Admin> CreateAsync(
