@@ -146,6 +146,7 @@ public static partial class HostConfigurations
     private static WebApplicationBuilder AddUsersInfrastructure(this WebApplicationBuilder builder)
     {
         builder.Services
+            .AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IAdminRepository, AdminRepository>()
             .AddScoped<IMemberRepository, MemberRepository>();
         
