@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text;
 using FluentValidation;
+using Gymphony.Api.Data;
 using Gymphony.Api.Filters;
 using Gymphony.Application.Common.EventBus.Brokers;
 using Gymphony.Application.Common.Identity.Models.Settings;
@@ -180,6 +181,14 @@ public static partial class HostConfigurations
         var serviceScopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
         await serviceScopeFactory.MigrateAsync<AppDbContext>();
         
+        return app;
+    }
+    
+    private static async ValueTask<WebApplication> SeedDataAsync(this WebApplication app)
+    {
+        var serviceScope = app.Services.CreateScope();
+        await serviceScope.ServiceProvider.InitializeAsync();
+
         return app;
     }
     
