@@ -40,25 +40,7 @@ public class AuthController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
 
-    [Authorize(Roles = "Admin")]
-    [HttpPost("admin-sign-up")]
-    public async ValueTask<IActionResult> AddAdminAsync(
-        [FromBody] SignUpDetails signUpDetails,
-        CancellationToken cancellationToken)
-    {
-        var signUpCommand = new SignUpCommand
-        {
-            SignUpDetails = signUpDetails,
-            AuthProvider = Provider.EmailPassword,
-            Role = Role.Admin
-        };
-
-        var result = await mediator.Send(signUpCommand, cancellationToken);
-
-        return Ok(result);
-    }
-
-    [HttpPost("sign-in")]
+    [HttpPost("sign-in-by-email")]
     public async ValueTask<IActionResult> SignInWithEmailAsync(
         [FromBody] SignInDetails signInDetails, 
         CancellationToken cancellationToken = default)
