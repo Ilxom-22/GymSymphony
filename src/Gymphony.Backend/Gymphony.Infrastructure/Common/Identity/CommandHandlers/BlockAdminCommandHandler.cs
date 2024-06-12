@@ -1,5 +1,7 @@
+using Gymphony.Application.Common.EventBus.Brokers;
 using Gymphony.Application.Common.Exceptions;
 using Gymphony.Application.Common.Identity.Commands;
+using Gymphony.Application.Common.Identity.Events;
 using Gymphony.Domain.Brokers;
 using Gymphony.Domain.Common.Commands;
 using Gymphony.Domain.Entities;
@@ -11,12 +13,13 @@ namespace Gymphony.Infrastructure.Common.Identity.CommandHandlers;
 
 public class BlockAdminCommandHandler(
     IRequestContextProvider requestContextProvider,
+    IEventBusBroker eventBusBroker,
     IAdminRepository adminRepository)
     : ICommandHandler<BlockAdminCommand, bool>
 {
     public async Task<bool> Handle(BlockAdminCommand request, CancellationToken cancellationToken)
     {
-        var actionAdminId = requestContextProvider.GetUserId()!;
+        var actionAdminId = (Guid)requestContextProvider.GetUserId()!;
         
         if (actionAdminId == request.AdminId && adminRepository.GetActiveAdminsCount() < 2)
             throw new InvalidEntityStateChangeException<Admin>(
@@ -29,11 +32,20 @@ public class BlockAdminCommandHandler(
             .FirstOrDefaultAsync(cancellationToken)
                          ?? throw new EntityNotFoundException<Admin>($"Admin with id {request.AdminId} not found!");
 
+        if (foundAdmin.Status == AccountStatus.Blocked)
+            return true;
+        
         foundAdmin.Status = AccountStatus.Blocked;
         foundAdmin.AccessToken = null;
         foundAdmin.RefreshToken = null;
         
         await adminRepository.UpdateAsync(foundAdmin, cancellationToken: cancellationToken);
+
+        await eventBusBroker.PublishLocalAsync(new AdminBlockedEvent
+        {
+            BlockedAdminId = foundAdmin.Id,
+            BlockedByAdminId = actionAdminId
+        });
 
         return true;
     }
