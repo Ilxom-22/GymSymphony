@@ -41,8 +41,11 @@ public static partial class HostConfigurations
     private static WebApplicationBuilder AddExposers(this WebApplicationBuilder builder)
     {
         builder.Services.AddRouting(options => options.LowercaseUrls = true);
-        builder.Services.AddControllers(configs => configs.Filters
-            .Add<AccessTokenValidationFilter>());
+        builder.Services.AddControllers(configs =>
+        {
+            configs.Filters.Add<ExceptionFilter>();
+            configs.Filters.Add<AccessTokenValidationFilter>();
+        });
 
         return builder;
     }
