@@ -14,9 +14,17 @@ public interface IAdminRepository
         Guid adminId,
         QueryOptions queryOptions = default,
         CancellationToken cancellationToken = default);
+
+    int GetActiveAdminsCount(
+        QueryOptions queryOptions = default);
     
     ValueTask<Admin> CreateAsync(
         Admin admin, 
+        bool saveChanges = true,
+        CancellationToken cancellationToken = default);
+
+    ValueTask<Admin> UpdateAsync(
+        Admin admin,
         bool saveChanges = true,
         CancellationToken cancellationToken = default);
 }
