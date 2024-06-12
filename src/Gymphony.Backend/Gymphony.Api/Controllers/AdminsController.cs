@@ -30,7 +30,7 @@ public class AdminsController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
 
-    [HttpPost("block/{adminId:guid}")]
+    [HttpPut("block/{adminId:guid}")]
     public async ValueTask<IActionResult> BlockAdminAsync(
         [FromRoute] Guid adminId,
         CancellationToken cancellationToken)
@@ -38,6 +38,18 @@ public class AdminsController(IMediator mediator) : ControllerBase
         var blockAdminCommand = new BlockAdminCommand { AdminId = adminId };
 
         await mediator.Send(blockAdminCommand, cancellationToken);
+        
+        return NoContent();
+    }
+
+    [HttpPut("unblock/{adminId:guid}")]
+    public async ValueTask<IActionResult> UnblockAdminAsync(
+        [FromRoute] Guid adminId,
+        CancellationToken cancellationToken)
+    {
+        var unblockAdminCommand = new UnblockAdminCommand { AdminId = adminId };
+
+        await mediator.Send(unblockAdminCommand, cancellationToken);
         
         return NoContent();
     }
