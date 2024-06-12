@@ -49,4 +49,12 @@ public class AdminRepository(AppDbContext dbContext) :
     {
         return base.UpdateAsync(admin, saveChanges, cancellationToken);
     }
+
+    public new ValueTask<Admin> DeleteAsync(
+        Admin admin,
+        bool saveChanges = true,
+        CancellationToken cancellationToken = default)
+    {
+        return base.DeleteAsync(admin, saveChanges, cancellationToken);
+    }
 }

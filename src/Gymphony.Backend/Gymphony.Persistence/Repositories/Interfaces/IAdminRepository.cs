@@ -27,4 +27,9 @@ public interface IAdminRepository
         Admin admin,
         bool saveChanges = true,
         CancellationToken cancellationToken = default);
+
+    ValueTask<Admin> DeleteAsync(
+        Admin admin,
+        bool saveChanges = true,
+        CancellationToken cancellationToken = default);
 }
