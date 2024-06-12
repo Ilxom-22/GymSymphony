@@ -3,7 +3,7 @@ using Gymphony.Domain.Enums;
 
 namespace Gymphony.Domain.Entities;
 
-public abstract class User : AuditableSoftDeletedEntity
+public abstract class User : AuditableEntity
 {
     public string FirstName { get; set; } = default!;
 
@@ -18,4 +18,8 @@ public abstract class User : AuditableSoftDeletedEntity
     public Provider AuthenticationProvider { get; set; }
 
     public string AuthDataHash { get; set; } = default!;
+
+    public AccessToken? AccessToken { get; set; }
+    
+    public RefreshToken? RefreshToken { get; set; }
 }

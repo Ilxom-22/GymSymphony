@@ -13,7 +13,9 @@ public static partial class HostConfigurations
             .AddRequestContextTools()
             .AddJwtAuthentication()
             .AddIdentityInfrastructure()
-            .AddUsersInfrastructure();
+            .AddUsersInfrastructure()
+            .AddValidators()
+            .AddMappers();
         
         return builder;
     }
@@ -25,6 +27,7 @@ public static partial class HostConfigurations
             .UseExposers();
 
         await app.MigrateDatabaseSchemaAsync();
+        await app.SeedDataAsync();
 
         return app;
     }

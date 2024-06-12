@@ -14,7 +14,7 @@ public class AccessTokenConfiguration : IEntityTypeConfiguration<AccessToken>
 
         builder
             .HasOne<User>(token => token.User)
-            .WithOne()
+            .WithOne(user => user.AccessToken)
             .HasForeignKey<AccessToken>(token => token.UserId);
     }
 }
