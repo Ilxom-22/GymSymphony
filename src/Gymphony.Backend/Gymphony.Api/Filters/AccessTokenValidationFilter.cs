@@ -20,6 +20,8 @@ public class AccessTokenValidationFilter(
     {
         var isAuthorized = context.ActionDescriptor.EndpointMetadata
             .Any(endpointMetadata => endpointMetadata is AuthorizeAttribute);
+        
+        var actionName = context.ActionDescriptor.RouteValues["action"];
 
         if (isAuthorized)
         {
@@ -30,12 +32,19 @@ public class AccessTokenValidationFilter(
 
             _ = await accessTokenRepository.GetByUserIdAsync(
                 (Guid)userId,
-                new QueryOptions(QueryTrackingMode.AsNoTracking));
+                new QueryOptions(QueryTrackingMode.AsNoTracking))
+                ?? throw new AuthenticationException("Unauthorized access!");
 
             var user = await userRepository.GetByIdAsync((Guid)userId,
                 new QueryOptions(QueryTrackingMode.AsNoTracking)) 
                        ?? throw new AuthenticationException("Unauthorized access!");
 
+            if (actionName is "GetCurrentUser" or "LogOut")
+            {
+                await next();
+                return;
+            }
+            
             if (user.Status == AccountStatus.Unverified)
                 throw new AuthenticationException("Verify your email address please!");
         }
