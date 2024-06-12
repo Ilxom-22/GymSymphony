@@ -1,6 +1,5 @@
 using Gymphony.Application.Common.Identity.Commands;
 using Gymphony.Application.Common.Identity.Models.Dtos;
-using Gymphony.Domain.Entities;
 using Gymphony.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -51,6 +50,18 @@ public class AdminsController(IMediator mediator) : ControllerBase
 
         await mediator.Send(unblockAdminCommand, cancellationToken);
         
+        return NoContent();
+    }
+
+    [HttpDelete("{adminId:guid}")]
+    public async ValueTask<IActionResult> RemoveAdminAsync(
+        [FromRoute] Guid adminId,
+        CancellationToken cancellationToken)
+    {
+        var removeAdminCommand = new RemoveAdminCommand { AdminId = adminId };
+
+        await mediator.Send(removeAdminCommand, cancellationToken);
+
         return NoContent();
     }
 }
