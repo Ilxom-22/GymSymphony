@@ -10,7 +10,7 @@ public class NotificationTemplateConfiguration : IEntityTypeConfiguration<Notifi
     {
         builder.HasKey(notification => notification.Id);
         builder.HasIndex(notification => notification.Type).IsUnique();
-        builder.Property(notification => notification.Title).IsRequired();
+        builder.Property(notification => notification.Title).HasMaxLength(256).IsRequired();
         builder.Property(notification => notification.Content).IsRequired();
     }
 }

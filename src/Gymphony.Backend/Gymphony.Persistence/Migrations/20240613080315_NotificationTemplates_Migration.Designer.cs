@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gymphony.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240613073813_NotificationTemplate_Migration")]
-    partial class NotificationTemplate_Migration
+    [Migration("20240613080315_NotificationTemplates_Migration")]
+    partial class NotificationTemplates_Migration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -57,7 +57,8 @@ namespace Gymphony.Persistence.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<int>("Type")
                         .HasColumnType("integer");

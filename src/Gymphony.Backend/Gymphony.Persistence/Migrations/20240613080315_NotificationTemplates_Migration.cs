@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Gymphony.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class NotificationTemplate_Migration : Migration
+    public partial class NotificationTemplates_Migration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace Gymphony.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Title = table.Column<string>(type: "text", nullable: false),
+                    Title = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     Content = table.Column<string>(type: "text", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false)
                 },
