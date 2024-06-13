@@ -31,7 +31,7 @@ public class RequestContextProvider(
         var claimsUserId = GetUserIdFromClaims();
 
         if (claimsUserId is not null)
-            return (Guid)claimsUserId;
+            return claimsUserId;
 
         var accessToken = GetAccessToken();
 
