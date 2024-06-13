@@ -25,7 +25,7 @@ public class AccessTokenValidationFilter(
 
         if (isAuthorized)
         {
-            var userId = requestContextProvider.GetUserId();
+            var userId = requestContextProvider.GetUserIdFromClaims();
 
             if (userId is null)
                 throw new AuthenticationException("Unauthorized access!");

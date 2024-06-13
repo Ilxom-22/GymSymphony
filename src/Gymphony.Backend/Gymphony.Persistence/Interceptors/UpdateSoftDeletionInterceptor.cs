@@ -24,7 +24,7 @@ public class UpdateSoftDeletionInterceptor(IRequestContextProvider requestContex
             entry.State = EntityState.Modified;
                 
             entry.Property(nameof(IDeletionAuditableEntity.DeletedByUserId)).CurrentValue =
-                requestContextProvider.GetUserId();
+                requestContextProvider.GetUserIdFromClaims();
         });
         
         softDeletedEntries.ForEach(entry =>

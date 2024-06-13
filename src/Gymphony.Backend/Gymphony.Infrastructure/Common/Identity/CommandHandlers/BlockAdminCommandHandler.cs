@@ -19,7 +19,7 @@ public class BlockAdminCommandHandler(
 {
     public async Task<bool> Handle(BlockAdminCommand request, CancellationToken cancellationToken)
     {
-        var actionAdminId = (Guid)requestContextProvider.GetUserId()!;
+        var actionAdminId = (Guid)requestContextProvider.GetUserIdFromClaims()!;
         
         if (actionAdminId == request.AdminId && adminRepository.GetActiveAdminsCount() < 2)
             throw new InvalidEntityStateChangeException<Admin>(

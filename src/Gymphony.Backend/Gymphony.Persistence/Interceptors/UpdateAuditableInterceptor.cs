@@ -34,14 +34,14 @@ public class UpdateAuditableInterceptor(IRequestContextProvider requestContextPr
         {
             if (entry.State == EntityState.Added)
                 entry.Property(nameof(ICreationAuditableEntity.CreatedByUserId)).CurrentValue =
-                    requestContextProvider.GetUserId();
+                    requestContextProvider.GetUserIdFromClaims();
         });
         
         modificationAuditableEntries.ForEach(entry =>
         {
             if (entry.State == EntityState.Modified)
                 entry.Property(nameof(IModificationAuditableEntity.ModifiedByUserId)).CurrentValue =
-                    requestContextProvider.GetUserId();
+                    requestContextProvider.GetUserIdFromClaims();
         });
         
         return base.SavingChangesAsync(eventData, result, cancellationToken);

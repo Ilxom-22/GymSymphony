@@ -18,7 +18,7 @@ public class UnblockAdminCommandHandler(
 {
     public async Task<bool> Handle(UnblockAdminCommand request, CancellationToken cancellationToken)
     {
-        var actionAdminId = (Guid)requestContextProvider.GetUserId()!;
+        var actionAdminId = (Guid)requestContextProvider.GetUserIdFromClaims()!;
 
         if (actionAdminId == request.AdminId)
             return true;

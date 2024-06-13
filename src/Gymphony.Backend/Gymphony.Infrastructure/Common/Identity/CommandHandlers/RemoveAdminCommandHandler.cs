@@ -17,7 +17,7 @@ public class RemoveAdminCommandHandler(
 {
     public async Task<bool> Handle(RemoveAdminCommand request, CancellationToken cancellationToken)
     {
-        var actionAdminId = (Guid)requestContextProvider.GetUserId()!;
+        var actionAdminId = (Guid)requestContextProvider.GetUserIdFromClaims()!;
 
         if (actionAdminId == request.AdminId && adminRepository.GetActiveAdminsCount() < 2)
             throw new InvalidEntityStateChangeException<Admin>("You cannot remove yourself from admins since you are currently the only active administrator!");

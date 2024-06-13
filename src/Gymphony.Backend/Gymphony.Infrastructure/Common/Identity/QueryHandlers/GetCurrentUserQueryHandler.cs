@@ -16,7 +16,7 @@ public class GetCurrentUserQueryHandler(
 {
     public async Task<UserDto> Handle(GetCurrentUserQuery request, CancellationToken cancellationToken)
     {
-        var currentUserId = requestContextProvider.GetUserId()
+        var currentUserId = requestContextProvider.GetUserIdFromClaims()
             ?? throw new AuthenticationException("Unauthorized access!");
 
         var currentUser = await userRepository.GetByIdAsync(currentUserId,
