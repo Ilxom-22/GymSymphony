@@ -9,6 +9,11 @@ public interface IAdminRepository
     IQueryable<Admin> Get(
         Expression<Func<Admin, bool>>? predicate = default,
         QueryOptions queryOptions = default);
+
+    ValueTask<Admin?> GetByIdAsync(
+        Guid adminId,
+        QueryOptions queryOptions = default,
+        CancellationToken cancellationToken = default);
     
     ValueTask<Admin> CreateAsync(
         Admin admin, 
