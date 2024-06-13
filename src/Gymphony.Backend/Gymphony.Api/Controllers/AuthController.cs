@@ -56,6 +56,16 @@ public class AuthController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
 
+    [HttpPost("refresh-token")]
+    public async ValueTask<IActionResult> RefreshTokenAsync(
+        [FromBody] RefreshTokenCommand refreshTokenCommand,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(refreshTokenCommand, cancellationToken);
+        
+        return Ok(result);
+    }
+
     [Authorize]
     [HttpPost("log-out")]
     public async ValueTask<IActionResult> LogOutAsync(CancellationToken cancellationToken)
