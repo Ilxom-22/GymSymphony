@@ -14,6 +14,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<AccessToken> AccessTokens => Set<AccessToken>();
 
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+
+    public DbSet<NotificationTemplate> NotificationTemplates => Set<NotificationTemplate>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
