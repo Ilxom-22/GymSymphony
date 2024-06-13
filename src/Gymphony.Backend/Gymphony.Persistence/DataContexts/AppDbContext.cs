@@ -16,6 +16,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     public DbSet<NotificationTemplate> NotificationTemplates => Set<NotificationTemplate>();
+
+    public DbSet<NotificationHistory> NotificationHistories => Set<NotificationHistory>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
