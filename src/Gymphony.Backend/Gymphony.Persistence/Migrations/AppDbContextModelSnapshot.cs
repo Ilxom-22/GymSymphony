@@ -78,9 +78,6 @@ namespace Gymphony.Persistence.Migrations
                     b.Property<DateTimeOffset>("CreatedTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTimeOffset?>("DeletedTime")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("EmailAddress")
                         .IsRequired()
                         .HasColumnType("text");
@@ -89,9 +86,6 @@ namespace Gymphony.Persistence.Migrations
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -123,6 +117,12 @@ namespace Gymphony.Persistence.Migrations
                 {
                     b.HasBaseType("Gymphony.Domain.Entities.User");
 
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("TemporaryPasswordChanged")
+                        .HasColumnType("boolean");
+
                     b.HasDiscriminator().HasValue(0);
                 });
 
@@ -139,7 +139,7 @@ namespace Gymphony.Persistence.Migrations
             modelBuilder.Entity("Gymphony.Domain.Entities.AccessToken", b =>
                 {
                     b.HasOne("Gymphony.Domain.Entities.User", "User")
-                        .WithOne()
+                        .WithOne("AccessToken")
                         .HasForeignKey("Gymphony.Domain.Entities.AccessToken", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -150,12 +150,19 @@ namespace Gymphony.Persistence.Migrations
             modelBuilder.Entity("Gymphony.Domain.Entities.RefreshToken", b =>
                 {
                     b.HasOne("Gymphony.Domain.Entities.User", "User")
-                        .WithOne()
+                        .WithOne("RefreshToken")
                         .HasForeignKey("Gymphony.Domain.Entities.RefreshToken", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Gymphony.Domain.Entities.User", b =>
+                {
+                    b.Navigation("AccessToken");
+
+                    b.Navigation("RefreshToken");
                 });
 #pragma warning restore 612, 618
         }

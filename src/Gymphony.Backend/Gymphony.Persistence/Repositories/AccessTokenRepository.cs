@@ -10,10 +10,12 @@ public class AccessTokenRepository(AppDbContext dbContext) :
     EntityRepositoryBase<AppDbContext, AccessToken>(dbContext),
     IAccessTokenRepository
 {
-    public async ValueTask<AccessToken?> GetByUserIdAsync(Guid userId, QueryOptions queryOptions = default)
+    public async ValueTask<AccessToken?> GetByUserIdAsync(Guid userId,
+        QueryOptions queryOptions = default,
+        CancellationToken cancellationToken = default)
     {
         var foundToken = await base.Get(token => token.UserId == userId,queryOptions)
-            .SingleOrDefaultAsync();
+            .SingleOrDefaultAsync(cancellationToken);
 
         return foundToken;
     }

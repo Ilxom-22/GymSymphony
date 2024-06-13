@@ -1,5 +1,7 @@
 using System.Reflection;
 using System.Text;
+using FluentValidation;
+using Gymphony.Api.Data;
 using Gymphony.Api.Filters;
 using Gymphony.Application.Common.EventBus.Brokers;
 using Gymphony.Application.Common.Identity.Models.Settings;
@@ -39,8 +41,11 @@ public static partial class HostConfigurations
     private static WebApplicationBuilder AddExposers(this WebApplicationBuilder builder)
     {
         builder.Services.AddRouting(options => options.LowercaseUrls = true);
-        builder.Services.AddControllers(configs => configs.Filters
-            .Add<AccessTokenValidationFilter>());
+        builder.Services.AddControllers(configs =>
+        {
+            configs.Filters.Add<ExceptionFilter>();
+            configs.Filters.Add<AccessTokenValidationFilter>();
+        });
 
         return builder;
     }
@@ -145,6 +150,7 @@ public static partial class HostConfigurations
     private static WebApplicationBuilder AddUsersInfrastructure(this WebApplicationBuilder builder)
     {
         builder.Services
+            .AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IAdminRepository, AdminRepository>()
             .AddScoped<IMemberRepository, MemberRepository>();
         
@@ -158,12 +164,34 @@ public static partial class HostConfigurations
         
         return builder;
     }
+
+    private static WebApplicationBuilder AddValidators(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddValidatorsFromAssemblies(Assemblies);
+        
+        return builder;
+    }
+
+    private static WebApplicationBuilder AddMappers(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddAutoMapper(Assemblies);
+
+        return builder;
+    }
     
     private static async ValueTask<WebApplication> MigrateDatabaseSchemaAsync(this WebApplication app)
     {
         var serviceScopeFactory = app.Services.GetRequiredService<IServiceScopeFactory>();
         await serviceScopeFactory.MigrateAsync<AppDbContext>();
         
+        return app;
+    }
+    
+    private static async ValueTask<WebApplication> SeedDataAsync(this WebApplication app)
+    {
+        var serviceScope = app.Services.CreateScope();
+        await serviceScope.ServiceProvider.InitializeAsync();
+
         return app;
     }
     

@@ -8,6 +8,6 @@ public class AdminConfiguration : IEntityTypeConfiguration<Admin>
 {
     public void Configure(EntityTypeBuilder<Admin> builder)
     {
-        
+        builder.Property(admin => admin.CreatedByUserId).IsRequired();
     }
 }
