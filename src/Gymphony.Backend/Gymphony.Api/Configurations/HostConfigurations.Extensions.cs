@@ -165,6 +165,13 @@ public static partial class HostConfigurations
         return builder;
     }
 
+    private static WebApplicationBuilder AddNotificationsInfrastructure(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<INotificationTemplateRepository, NotificationTemplateRepository>();
+        
+        return builder;
+    }
+
     private static WebApplicationBuilder AddValidators(this WebApplicationBuilder builder)
     {
         builder.Services.AddValidatorsFromAssemblies(Assemblies);
