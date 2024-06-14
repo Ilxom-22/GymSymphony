@@ -17,7 +17,7 @@ public class NotificationHistory : AuditableEntity
 
     public NotificationMethod NotificationMethod { get; set; }
 
-    public DateTimeOffset? SentDate { get; set; }
+    public DateTimeOffset SentTime { get; set; }
 
     public string? ErrorMessage { get; set; }
 

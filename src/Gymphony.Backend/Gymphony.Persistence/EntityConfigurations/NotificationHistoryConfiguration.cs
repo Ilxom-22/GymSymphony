@@ -13,6 +13,7 @@ public class NotificationHistoryConfiguration : IEntityTypeConfiguration<Notific
         builder.Property(notification => notification.Content).IsRequired();
         builder.Property(notification => notification.TemplateId).IsRequired();
         builder.Property(notification => notification.RecipientId).IsRequired();
+        builder.Property(notification => notification.SentTime).IsRequired();
 
         builder
             .HasOne<NotificationTemplate>(history => history.Template)
