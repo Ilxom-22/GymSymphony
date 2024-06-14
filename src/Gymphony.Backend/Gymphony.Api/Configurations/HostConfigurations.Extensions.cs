@@ -6,10 +6,13 @@ using Gymphony.Api.Filters;
 using Gymphony.Application.Common.EventBus.Brokers;
 using Gymphony.Application.Common.Identity.Models.Settings;
 using Gymphony.Application.Common.Identity.Services;
+using Gymphony.Application.Common.Notifications.Brokers;
+using Gymphony.Application.Common.Notifications.Models.Settings;
 using Gymphony.Domain.Brokers;
 using Gymphony.Infrastructure.Common.EventBus.Brokers;
 using Gymphony.Infrastructure.Common.Identity.Brokers;
 using Gymphony.Infrastructure.Common.Identity.Services;
+using Gymphony.Infrastructure.Common.Notifications.Brokers;
 using Gymphony.Persistence.DataContexts;
 using Gymphony.Persistence.Extensions;
 using Gymphony.Persistence.Interceptors;
@@ -167,7 +170,21 @@ public static partial class HostConfigurations
 
     private static WebApplicationBuilder AddNotificationsInfrastructure(this WebApplicationBuilder builder)
     {
+        if (builder.Environment.IsDevelopment())
+            builder.Services.Configure<SmtpEmailSenderSettings>(
+                builder.Configuration.GetSection(nameof(SmtpEmailSenderSettings)));
+        else
+            builder.Services.Configure<SmtpEmailSenderSettings>(options =>
+            {
+                options.Host = Environment.GetEnvironmentVariable("SmtpHost")!;
+                options.Port = Convert.ToInt32(Environment.GetEnvironmentVariable("SmtpPort"));
+                options.CredentialAddress = Environment.GetEnvironmentVariable("SmtpCredentialAddress")!;
+                options.Password = Environment.GetEnvironmentVariable("SmtpPassword")!;
+            });
+        
         builder.Services.AddScoped<INotificationTemplateRepository, NotificationTemplateRepository>();
+
+        builder.Services.AddTransient<IEmailSenderBroker, EmailSenderBroker>();
         
         return builder;
     }
