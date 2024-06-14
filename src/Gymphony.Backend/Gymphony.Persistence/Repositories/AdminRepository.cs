@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using Gymphony.Domain.Common.Queries;
 using Gymphony.Domain.Entities;
+using Gymphony.Domain.Enums;
 using Gymphony.Persistence.DataContexts;
 using Gymphony.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -27,11 +28,33 @@ public class AdminRepository(AppDbContext dbContext) :
             .FirstOrDefaultAsync(cancellationToken);
     }
 
+    public int GetActiveAdminsCount(QueryOptions queryOptions = default)
+    {
+        return base.Get(admin => admin.Status == AccountStatus.Active, queryOptions)
+            .Count();
+    }
+
     public new ValueTask<Admin> CreateAsync(
         Admin admin, 
         bool saveChanges = true, 
         CancellationToken cancellationToken = default)
     {
         return base.CreateAsync(admin, saveChanges, cancellationToken);
+    }
+
+    public new ValueTask<Admin> UpdateAsync(
+        Admin admin,
+        bool saveChanges = true, 
+        CancellationToken cancellationToken = default)
+    {
+        return base.UpdateAsync(admin, saveChanges, cancellationToken);
+    }
+
+    public new ValueTask<Admin> DeleteAsync(
+        Admin admin,
+        bool saveChanges = true,
+        CancellationToken cancellationToken = default)
+    {
+        return base.DeleteAsync(admin, saveChanges, cancellationToken);
     }
 }

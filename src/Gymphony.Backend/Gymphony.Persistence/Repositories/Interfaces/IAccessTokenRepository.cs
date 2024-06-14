@@ -5,7 +5,9 @@ namespace Gymphony.Persistence.Repositories.Interfaces;
 
 public interface IAccessTokenRepository
 {
-    ValueTask<AccessToken?> GetByUserIdAsync(Guid userId, QueryOptions queryOptions = default);
+    ValueTask<AccessToken?> GetByUserIdAsync(Guid userId,
+        QueryOptions queryOptions = default,
+        CancellationToken cancellationToken = default);
     
     ValueTask<AccessToken> CreateAsync(
         AccessToken accessToken,

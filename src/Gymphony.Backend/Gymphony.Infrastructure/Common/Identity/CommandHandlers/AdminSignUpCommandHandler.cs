@@ -23,12 +23,6 @@ public class AdminSignUpCommandHandler(
 {
     public async Task<UserDto> Handle(AdminSignUpCommand request, CancellationToken cancellationToken)
     {
-        var actionUserId = requestContextProvider.GetUserId() 
-                           ?? throw new AuthenticationException("Unauthorized access!");
-        _ = await adminRepository
-            .GetByIdAsync(actionUserId, new QueryOptions(QueryTrackingMode.AsNoTracking), cancellationToken) 
-                         ?? throw new AuthenticationException("Unauthorized access!");
-        
         var adminData = mapper.Map<Admin>(request.SignUpDetails);
         adminData.AuthDataHash = passwordHasherService.HashPassword(request.SignUpDetails.AuthData);
         

@@ -14,7 +14,7 @@ public class LogOutCommandHandler(
 {
     public async Task<bool> Handle(LogOutCommand request, CancellationToken cancellationToken)
     {
-        var userId = requestContextProvider.GetUserId()
+        var userId = requestContextProvider.GetUserIdFromClaims()
             ?? throw new AuthenticationException("Unauthorized access!");
 
         await accessTokenRepository.DeleteByUserIdAsync(userId, cancellationToken: cancellationToken);
