@@ -67,7 +67,7 @@ namespace Gymphony.Persistence.Migrations
                     b.Property<Guid>("RecipientId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset?>("SentDate")
+                    b.Property<DateTimeOffset>("SentTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Status")

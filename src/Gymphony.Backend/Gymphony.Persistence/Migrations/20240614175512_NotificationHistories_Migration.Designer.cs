@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gymphony.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240613080754_NotificationHistories_Migration")]
+    [Migration("20240614175512_NotificationHistories_Migration")]
     partial class NotificationHistories_Migration
     {
         /// <inheritdoc />
@@ -70,7 +70,7 @@ namespace Gymphony.Persistence.Migrations
                     b.Property<Guid>("RecipientId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTimeOffset?>("SentDate")
+                    b.Property<DateTimeOffset>("SentTime")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Status")

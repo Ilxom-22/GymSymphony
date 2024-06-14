@@ -22,7 +22,7 @@ namespace Gymphony.Persistence.Migrations
                     TemplateId = table.Column<Guid>(type: "uuid", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     NotificationMethod = table.Column<int>(type: "integer", nullable: false),
-                    SentDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
+                    SentTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ErrorMessage = table.Column<string>(type: "text", nullable: true),
                     CreatedTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ModifiedTime = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
