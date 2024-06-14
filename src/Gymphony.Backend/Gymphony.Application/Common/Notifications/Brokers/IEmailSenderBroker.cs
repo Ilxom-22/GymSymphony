@@ -1,4 +1,5 @@
 using Gymphony.Application.Common.Notifications.Models;
+using Gymphony.Application.Common.Notifications.Models.Dtos;
 
 namespace Gymphony.Application.Common.Notifications.Brokers;
 
