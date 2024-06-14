@@ -181,8 +181,13 @@ public static partial class HostConfigurations
                 options.CredentialAddress = Environment.GetEnvironmentVariable("SmtpCredentialAddress")!;
                 options.Password = Environment.GetEnvironmentVariable("SmtpPassword")!;
             });
+
+        builder.Services.Configure<NotificationTemplateRegexPatterns>(
+            builder.Configuration.GetSection(nameof(NotificationTemplateRegexPatterns)));
         
-        builder.Services.AddScoped<INotificationTemplateRepository, NotificationTemplateRepository>();
+        builder.Services
+            .AddScoped<INotificationTemplateRepository, NotificationTemplateRepository>()
+            .AddScoped<INotificationHistoryRepository, NotificationHistoryRepository>();
 
         builder.Services.AddTransient<IEmailSenderBroker, EmailSenderBroker>();
         
