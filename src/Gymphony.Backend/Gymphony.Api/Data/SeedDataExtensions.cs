@@ -17,9 +17,26 @@ public static class SeedDataExtensions
         
         if (!await appDbContext.Admins.AnyAsync())
             await AddDefaultAdminAsync(appDbContext, passwordHasherService, configuration, webHostEnvironment);
+
+        if (!await appDbContext.NotificationTemplates.AnyAsync())
+            await SeedNotificationTemplatesAsync(appDbContext);
     }
 
-    private static async Task AddDefaultAdminAsync(
+    private static async ValueTask SeedNotificationTemplatesAsync(AppDbContext appDbContext)
+    {
+        var systemWelcomeTemplate = new NotificationTemplate
+        {
+            Id = Guid.NewGuid(),
+            Title = "Welcome to {{CompanyName}}",
+            Content = "Hi {{FirstName}},\n\nWelcome to the {{CompanyName}} family!\n\nWe're excited to have you on board and can't wait to support you on your fitness journey. At {{CompanyName}}, we're committed to helping you achieve your goals and enjoy every moment at our gym centers.\n\nIf you have any questions or need assistance, feel free to reach out to us. Let's make great things happen together!\n\nBest regards,\nThe {{CompanyName}} Team",
+            Type = NotificationType.SystemWelcome
+        };
+
+        await appDbContext.AddAsync(systemWelcomeTemplate);
+        appDbContext.SaveChanges();
+    }
+
+    private static async ValueTask AddDefaultAdminAsync(
         AppDbContext appDbContext,
         IPasswordHasherService passwordHasherService,
         IConfiguration configuration,
