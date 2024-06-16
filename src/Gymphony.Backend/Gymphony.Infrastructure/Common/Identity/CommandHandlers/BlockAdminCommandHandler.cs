@@ -41,11 +41,7 @@ public class BlockAdminCommandHandler(
         
         await adminRepository.UpdateAsync(foundAdmin, cancellationToken: cancellationToken);
 
-        await eventBusBroker.PublishLocalAsync(new AdminBlockedEvent
-        {
-            BlockedAdminId = foundAdmin.Id,
-            BlockedByAdminId = actionAdminId
-        });
+        await eventBusBroker.PublishLocalAsync(new AdminBlockedEvent { BlockedAdmin = foundAdmin });
 
         return true;
     }
