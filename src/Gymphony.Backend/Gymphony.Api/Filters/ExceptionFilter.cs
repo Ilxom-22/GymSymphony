@@ -19,6 +19,10 @@ public class ExceptionFilter : IExceptionFilter
             new ProblemDetails { Status = StatusCodes.Status400BadRequest }
         },
         {
+            typeof(InvalidOperationException),
+            new ProblemDetails { Status = StatusCodes.Status500InternalServerError }
+        },
+        {
             typeof(FluentValidation.ValidationException),
             new ProblemDetails { Status = StatusCodes.Status400BadRequest } 
         },
