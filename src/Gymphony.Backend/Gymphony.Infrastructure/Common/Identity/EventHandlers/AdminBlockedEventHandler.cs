@@ -13,6 +13,6 @@ public class AdminBlockedEventHandler(IEventBusBroker eventBusBroker)
         await eventBusBroker.PublishLocalAsync(new AdminBlockedNotificationRequestedEvent 
         {
             Recipient = notification.BlockedAdmin
-        });
+        }, cancellationToken);
     }
 }

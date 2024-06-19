@@ -28,6 +28,6 @@ public class SystemWelcomeNotificationRequestedEventHandler(
         };
 
         await eventBusBroker.PublishLocalAsync(new NotificationMessageGeneratedEvent 
-            { Message = message });
+            { Message = message }, cancellationToken);
     }
 }

@@ -12,6 +12,6 @@ public class AdminRemovedEventHandler(IEventBusBroker eventBusBroker) : IEventHa
         await eventBusBroker.PublishLocalAsync(new AdminRemovedNotificationRequestedEvent() 
         {
             Recipient = notification.RemovedAdmin
-        });
+        }, cancellationToken);
     }
 }

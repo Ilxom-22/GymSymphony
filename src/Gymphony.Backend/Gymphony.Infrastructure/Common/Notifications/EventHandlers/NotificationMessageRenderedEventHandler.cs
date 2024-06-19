@@ -23,6 +23,6 @@ public class NotificationMessageRenderedEventHandler(
         await eventBusBroker.PublishLocalAsync(new NotificationMessageSentEvent
         {
             Message = notification.Message
-        });
+        }, cancellationToken);
     }
 }

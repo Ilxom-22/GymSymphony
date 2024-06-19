@@ -12,6 +12,6 @@ public class AdminUnblockedEventHandler(IEventBusBroker eventBusBroker) : IEvent
         await eventBusBroker.PublishLocalAsync(new AdminUnblockedNotificationRequestedEvent 
         {
             Recipient = notification.UnblockedAdmin
-        });
+        }, cancellationToken);
     }
 }
