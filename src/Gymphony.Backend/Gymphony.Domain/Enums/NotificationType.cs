@@ -7,5 +7,6 @@ public enum NotificationType
     AdminWelcome = 2,
     AdminBlockedNotification = 3,
     AdminUnblockedNotification = 4,
-    AdminRemovedNotification = 5
+    AdminRemovedNotification = 5,
+    PasswordResetVerification = 6
 }
