@@ -1,10 +1,9 @@
 using Gymphony.Domain.Common.Events;
+using Gymphony.Domain.Entities;
 
 namespace Gymphony.Application.Common.Identity.Events;
 
 public class AdminBlockedEvent : EventBase
 {
-    public Guid BlockedAdminId { get; set; }
-
-    public Guid BlockedByAdminId { get; set; }
+    public Admin BlockedAdmin { get; set; } = default!;
 }

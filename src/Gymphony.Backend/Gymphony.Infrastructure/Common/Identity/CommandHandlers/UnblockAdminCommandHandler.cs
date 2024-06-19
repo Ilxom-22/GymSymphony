@@ -34,8 +34,7 @@ public class UnblockAdminCommandHandler(
 
         await eventBusBroker.PublishLocalAsync(new AdminUnblockedEvent
         {
-            UnblockedAdminId = foundAdmin.Id,
-            UnblockedByAdminId = actionAdminId
+            UnblockedAdmin = foundAdmin
         });
 
         return true;

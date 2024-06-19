@@ -8,15 +8,15 @@ using MediatR;
 
 namespace Gymphony.Infrastructure.Common.Notifications.EventHandlers;
 
-public class SystemWelcomeNotificationRequestedEventHandler(
-    IEventBusBroker eventBusBroker,
-    IMediator mediator)
-    : IEventHandler<SystemWelcomeNotificationRequestedEvent>
+public class AdminWelcomeNotificationRequestedEventHandler(
+    IMediator mediator,
+    IEventBusBroker eventBusBroker)
+    : IEventHandler<AdminWelcomeNotificationRequestedEvent>
 {
-    public async Task Handle(SystemWelcomeNotificationRequestedEvent notification, CancellationToken cancellationToken)
+    public async Task Handle(AdminWelcomeNotificationRequestedEvent notification, CancellationToken cancellationToken)
     {
         var message = await mediator.Send(new RetrieveTemplateAsNotificationMessageCommand
-            { TemplateType = NotificationType.SystemWelcome }, cancellationToken);
+            { TemplateType = NotificationType.AdminWelcome }, cancellationToken);
 
         message.NotificationMethod = NotificationMethod.Email;
         message.Recipient = notification.Recipient;
@@ -24,10 +24,11 @@ public class SystemWelcomeNotificationRequestedEventHandler(
         message.Variables = new()
         {
             { NotificationPlaceholderConstants.FirstName, notification.Recipient.FirstName },
+            { NotificationPlaceholderConstants.EmailAddress, notification.Recipient.EmailAddress },
+            { NotificationPlaceholderConstants.Password, notification.TemporaryPassword },
             { NotificationPlaceholderConstants.CompanyName, NotificationPlaceholderConstants.CompanyNameVariable }
         };
 
-        await eventBusBroker.PublishLocalAsync(new NotificationMessageGeneratedEvent 
-            { Message = message });
+        await eventBusBroker.PublishLocalAsync(new NotificationMessageGeneratedEvent { Message = message });
     }
 }
