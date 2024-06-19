@@ -14,5 +14,10 @@ public class MemberCreatedEventHandler(IEventBusBroker eventBusBroker)
         {
             Recipient = notification.Member
         });
+
+        await eventBusBroker.PublishLocalAsync(new EmailVerificationNotificationRequestedEvent
+        {
+            Recipient = notification.Member
+        });
     }
 }
