@@ -173,8 +173,21 @@ public static partial class HostConfigurations
     
     private static WebApplicationBuilder AddIdentityInfrastructure(this WebApplicationBuilder builder)
     {
+        builder.Services.Configure<RefreshTokenSettings>(
+            builder.Configuration.GetSection(nameof(RefreshTokenSettings)));
+
+        builder.Services.Configure<VerificationTokenSettings>(
+            builder.Configuration.GetSection(nameof(VerificationTokenSettings)));
+        
         builder.Services
+            .AddTransient<ITokenGeneratorService, TokenGeneratorService>()
+            .AddTransient<IRefreshTokenGeneratorService, RefreshTokenGeneratorService>()
+            .AddTransient<IVerificationTokenGeneratorService, VerificationTokenGeneratorService>()
             .AddTransient<IPasswordHasherService, PasswordHasherService>();
+
+        builder.Services
+            .AddScoped<IRefreshTokenRepository, RefreshTokenRepository>()
+            .AddScoped<IVerificationTokenRepository, VerificationTokenRepository>();
         
         return builder;
     }
