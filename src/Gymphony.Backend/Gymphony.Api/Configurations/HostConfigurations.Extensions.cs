@@ -8,6 +8,7 @@ using Gymphony.Application.Common.Identity.Models.Settings;
 using Gymphony.Application.Common.Identity.Services;
 using Gymphony.Application.Common.Notifications.Brokers;
 using Gymphony.Application.Common.Notifications.Models.Settings;
+using Gymphony.Application.Common.Settings;
 using Gymphony.Domain.Brokers;
 using Gymphony.Infrastructure.Common.EventBus.Brokers;
 using Gymphony.Infrastructure.Common.Identity.Brokers;
@@ -97,6 +98,16 @@ public static partial class HostConfigurations
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddScoped<IRequestContextProvider, RequestContextProvider>();
+
+        if (builder.Environment.IsDevelopment())
+            builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection(nameof(ApiSettings)));
+        else
+            builder.Services.Configure<ApiSettings>(options =>
+            {
+                options.BaseAddress = Environment.GetEnvironmentVariable("ApiBaseAddress")!;
+                options.EmailVerificationEndpointAddress =
+                    Environment.GetEnvironmentVariable("EmailVerificationEndpointAddress")!;
+            });
         
         return builder;
     }
