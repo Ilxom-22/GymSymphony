@@ -116,9 +116,6 @@ public static partial class HostConfigurations
     {
         builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(nameof(JwtSettings)));
 
-        builder.Services.Configure<RefreshTokenSettings>(
-            builder.Configuration.GetSection(nameof(RefreshTokenSettings)));
-
         var jwtSecretKey = (builder.Environment.IsDevelopment()
             ? builder.Configuration["JwtSecretKey"]
             : Environment.GetEnvironmentVariable("JwtSecretKey"))
@@ -149,14 +146,10 @@ public static partial class HostConfigurations
                     };
                 }
             );
-        
-        builder.Services
-            .AddTransient<IAccessTokenGeneratorService, AccessTokenGeneratorService>()
-            .AddTransient<IRefreshTokenGeneratorService, RefreshTokenGeneratorService>();
 
-        builder.Services
-            .AddScoped<IAccessTokenRepository, AccessTokenRepository>()
-            .AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        builder.Services.AddTransient<IAccessTokenGeneratorService, AccessTokenGeneratorService>();
+
+        builder.Services.AddScoped<IAccessTokenRepository, AccessTokenRepository>();
         
         return builder;
     }
