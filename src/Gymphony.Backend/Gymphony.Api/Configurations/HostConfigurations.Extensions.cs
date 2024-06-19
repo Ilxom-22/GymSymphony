@@ -171,6 +171,9 @@ public static partial class HostConfigurations
 
         builder.Services.Configure<VerificationTokenSettings>(
             builder.Configuration.GetSection(nameof(VerificationTokenSettings)));
+
+        builder.Services.Configure<PasswordSettings>(
+            builder.Configuration.GetSection(nameof(PasswordSettings)));
         
         builder.Services
             .AddTransient<ITokenGeneratorService, TokenGeneratorService>()
