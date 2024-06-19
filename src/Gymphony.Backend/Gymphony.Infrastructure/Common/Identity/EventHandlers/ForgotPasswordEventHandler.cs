@@ -1,7 +1,10 @@
+using Gymphony.Application.Common.Exceptions;
 using Gymphony.Application.Common.Identity.Events;
 using Gymphony.Application.Common.Notifications.Events;
 using Gymphony.Domain.Common.Events;
 using Gymphony.Domain.Common.Queries;
+using Gymphony.Domain.Entities;
+using Gymphony.Domain.Enums;
 using Gymphony.Persistence.Repositories.Interfaces;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,8 +21,11 @@ public class ForgotPasswordEventHandler(
         await using var scope = serviceProvider.CreateAsyncScope();
         var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
 
-        var user = await userRepository.GetByEmailAddressAsync(request.EmailAddress, new QueryOptions(QueryTrackingMode.AsNoTracking))
+        var user = await userRepository.GetByEmailAddressAsync(request.EmailAddress, new QueryOptions(QueryTrackingMode.AsNoTracking), cancellationToken)
             ?? throw new ArgumentException($"User with email address {request.EmailAddress} does not exist!");
+        
+        if (user.AuthenticationProvider != Provider.EmailPassword)
+            throw new InvalidEntityStateChangeException<User>($"Since you signed up using your {user.AuthenticationProvider.ToString()} account, all the passwords are managed by your provider. Please try to sign in using your {user.AuthenticationProvider.ToString()} account!");
 
         await mediator.Publish(new PasswordResetNotificationRequestedEvent { Recipient = user }, cancellationToken);
     }
