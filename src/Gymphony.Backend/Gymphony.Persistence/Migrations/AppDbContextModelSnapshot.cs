@@ -185,6 +185,36 @@ namespace Gymphony.Persistence.Migrations
                     b.UseTphMappingStrategy();
                 });
 
+            modelBuilder.Entity("Gymphony.Domain.Entities.VerificationToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("ExpiryTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("VerificationTokens");
+                });
+
             modelBuilder.Entity("Gymphony.Domain.Entities.Admin", b =>
                 {
                     b.HasBaseType("Gymphony.Domain.Entities.User");
@@ -241,11 +271,24 @@ namespace Gymphony.Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Gymphony.Domain.Entities.VerificationToken", b =>
+                {
+                    b.HasOne("Gymphony.Domain.Entities.User", "User")
+                        .WithOne("VerificationToken")
+                        .HasForeignKey("Gymphony.Domain.Entities.VerificationToken", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Gymphony.Domain.Entities.User", b =>
                 {
                     b.Navigation("AccessToken");
 
                     b.Navigation("RefreshToken");
+
+                    b.Navigation("VerificationToken");
                 });
 #pragma warning restore 612, 618
         }

@@ -7,6 +7,8 @@ public static class NotificationPlaceholderConstants
     public const string EmailAddress = "{{EmailAddress}}";
     public const string Password = "{{Password}}";
     public const string CompanyName = "{{CompanyName}}";
+    public const string VerificationLink = "{{VerificationLink}}";
+    public const string PasswordResetLink = "{{PasswordResetLink}}";
 
     public const string CompanyNameVariable = "Gymphony";
 }

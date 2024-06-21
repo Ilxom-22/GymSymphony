@@ -35,7 +35,8 @@ public class UserRepository(AppDbContext dbContext) :
 
     public async ValueTask<User?> GetByEmailAddressAsync(
         string emailAddress,
-        QueryOptions queryOptions = default)
+        QueryOptions queryOptions = default,
+        CancellationToken cancellationToken = default)
     {
         return await base.Get(user => user.EmailAddress == emailAddress, queryOptions).FirstOrDefaultAsync();
     }

@@ -29,6 +29,6 @@ public class AdminWelcomeNotificationRequestedEventHandler(
             { NotificationPlaceholderConstants.CompanyName, NotificationPlaceholderConstants.CompanyNameVariable }
         };
 
-        await eventBusBroker.PublishLocalAsync(new NotificationMessageGeneratedEvent { Message = message });
+        await eventBusBroker.PublishLocalAsync(new NotificationMessageGeneratedEvent { Message = message }, cancellationToken);
     }
 }

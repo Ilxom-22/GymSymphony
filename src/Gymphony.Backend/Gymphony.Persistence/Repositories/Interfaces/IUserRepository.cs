@@ -21,7 +21,8 @@ public interface IUserRepository
     
     ValueTask<User?> GetByEmailAddressAsync(
         string emailAddress,
-        QueryOptions queryOptions = default);
+        QueryOptions queryOptions = default,
+        CancellationToken cancellationToken = default);
 
     ValueTask<User> UpdateAsync(
         User user,

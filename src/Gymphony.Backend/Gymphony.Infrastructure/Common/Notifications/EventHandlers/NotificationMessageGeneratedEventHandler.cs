@@ -49,6 +49,6 @@ public class NotificationMessageGeneratedEventHandler(
 
         notification.Message.IsRendered = true;
 
-        await eventBusBroker.PublishLocalAsync(new NotificationMessageRenderedEvent { Message = notification.Message });
+        await eventBusBroker.PublishLocalAsync(new NotificationMessageRenderedEvent { Message = notification.Message }, cancellationToken);
     }   
 }

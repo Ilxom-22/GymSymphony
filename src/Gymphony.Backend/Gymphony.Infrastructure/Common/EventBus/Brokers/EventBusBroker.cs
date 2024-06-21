@@ -6,8 +6,8 @@ namespace Gymphony.Infrastructure.Common.EventBus.Brokers;
 
 public class EventBusBroker(IPublisher mediator) : IEventBusBroker
 {
-    public ValueTask PublishLocalAsync<TEvent>(TEvent @event) where TEvent : EventBase
+    public ValueTask PublishLocalAsync<TEvent>(TEvent @event, CancellationToken cancellationToken = default) where TEvent : EventBase
     {
-        return new ValueTask(mediator.Publish(@event));
+        return new ValueTask(mediator.Publish(@event, cancellationToken));
     }
 }

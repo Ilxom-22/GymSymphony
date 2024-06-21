@@ -16,6 +16,7 @@ public class EmailSenderBroker(IOptions<SmtpEmailSenderSettings> smtpEmailSettin
         var mail = new MailMessage(_smtpEmailSenderSettings.CredentialAddress, message.Recipient.EmailAddress);
         mail.Subject = message.Title.ToString();
         mail.Body = message.Content.ToString();
+        mail.IsBodyHtml = true;
 
         var smtpClient = new SmtpClient(_smtpEmailSenderSettings.Host, _smtpEmailSenderSettings.Port);
         smtpClient.Credentials =

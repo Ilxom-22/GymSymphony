@@ -14,6 +14,6 @@ public class AdminCreatedEventHandler(IEventBusBroker eventBusBroker)
         {
             Recipient = notification.Admin,
             TemporaryPassword = notification.TemporaryPassword
-        });
+        }, cancellationToken);
     }
 }

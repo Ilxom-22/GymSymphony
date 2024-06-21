@@ -1,5 +1,6 @@
 using FluentValidation;
 using Gymphony.Application.Common.Identity.Models.Dtos;
+using Gymphony.Domain.Enums;
 
 namespace Gymphony.Infrastructure.Common.Identity.Validators;
 
@@ -20,10 +21,13 @@ public class SignUpDetailsValidator : AbstractValidator<SignUpDetails>
             .NotEmpty().WithMessage("Email Address field can't be empty!")
             .EmailAddress().WithMessage("Invalid Email Address! Please try again!");
 
-        RuleFor(user => user.AuthData)
-            .NotEmpty().WithMessage("Password field can't be empty!")
-            .MinimumLength(8).WithMessage("Password should be at least 8 characters length!")
-            .MaximumLength(16).WithMessage("Password length should not exceed 16 characters!");
+        RuleSet(RuleSets.EmailSignUp.ToString(), () =>
+            RuleFor(user => user.AuthData)
+                .SetValidator(new PasswordValidator()));
+        
+        RuleSet(RuleSets.ThirdPartySignUp.ToString(), () =>
+            RuleFor(user => user.AuthData)
+                .NotEmpty().WithMessage("Password field can't be empty!"));
 
         RuleFor(user => user.BirthDay)
             .Must(BeAValidAge).WithMessage("User must be at least 18 years old")

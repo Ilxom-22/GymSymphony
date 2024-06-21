@@ -35,7 +35,7 @@ public class UnblockAdminCommandHandler(
         await eventBusBroker.PublishLocalAsync(new AdminUnblockedEvent
         {
             UnblockedAdmin = foundAdmin
-        });
+        }, cancellationToken);
 
         return true;
     }
