@@ -31,7 +31,7 @@ public class MemberSignUpCommandHandler(
             .CreateAsync(memberData, cancellationToken: cancellationToken);
 
         if (member.AuthenticationProvider == Provider.EmailPassword)
-            await eventBusBroker.PublishLocalAsync(new MemberCreatedEvent { Member = member });
+            await eventBusBroker.PublishLocalAsync(new MemberCreatedEvent { Member = member }, cancellationToken);
 
         return mapper.Map<UserDto>(member);
     }

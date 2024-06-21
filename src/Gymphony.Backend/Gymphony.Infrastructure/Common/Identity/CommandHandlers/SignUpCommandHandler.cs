@@ -21,7 +21,11 @@ public class SignUpCommandHandler(
             throw new ValidationException("User with this email address is already registered!");
 
         var validationResult = await signUpDetailsValidator
-            .ValidateAsync(request.SignUpDetails, cancellationToken);
+            .ValidateAsync(request.SignUpDetails, options =>
+                options.IncludeRuleSets(request.AuthProvider == Provider.EmailPassword
+                    ? RuleSets.EmailSignUp.ToString()
+                    : RuleSets.ThirdPartySignUp.ToString()).IncludeRulesNotInRuleSet(), 
+                cancellationToken);
 
         if (!validationResult.IsValid)
             throw new ValidationException(validationResult.Errors[0].ToString());

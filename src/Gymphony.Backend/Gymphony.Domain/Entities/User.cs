@@ -22,4 +22,6 @@ public abstract class User : AuditableEntity
     public AccessToken? AccessToken { get; set; }
     
     public RefreshToken? RefreshToken { get; set; }
+
+    public VerificationToken? VerificationToken { get; set; }
 }

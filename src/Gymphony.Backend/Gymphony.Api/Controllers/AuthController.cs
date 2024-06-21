@@ -1,4 +1,6 @@
+using Gymphony.Application.Common.EventBus.Brokers;
 using Gymphony.Application.Common.Identity.Commands;
+using Gymphony.Application.Common.Identity.Events;
 using Gymphony.Application.Common.Identity.Models.Dtos;
 using Gymphony.Application.Common.Identity.Queries;
 using Gymphony.Domain.Enums;
@@ -10,7 +12,7 @@ namespace Gymphony.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(IMediator mediator) : ControllerBase
+public class AuthController(IMediator mediator, IEventBusBroker eventBusBroker) : ControllerBase
 {
     [Authorize]
     [HttpGet("me")]
@@ -72,6 +74,56 @@ public class AuthController(IMediator mediator) : ControllerBase
     {
         var logoutCommand = new LogOutCommand();
         await mediator.Send(logoutCommand, cancellationToken);
+        
+        return NoContent();
+    }
+
+    [Authorize]
+    [HttpPost("change-password")]
+    public async ValueTask<IActionResult> ChangePasswordAsync(
+        [FromBody] ChangePasswordCommand changePasswordCommand,
+        CancellationToken cancellationToken)
+    {
+        await mediator.Send(changePasswordCommand, cancellationToken);
+        
+        return NoContent();
+    }
+
+    [HttpGet("verify-email")]
+    public async ValueTask<IActionResult> VerifyEmailAsync([FromQuery] VerifyEmailCommand verifyEmailCommand, CancellationToken cancellationToken)
+    {
+        await mediator.Send(verifyEmailCommand, cancellationToken);
+        
+        return Accepted();
+    }
+
+    [HttpGet("resend-email-verification-message")]
+    public async ValueTask<IActionResult> ResendVerificationEmail(
+        [FromQuery] ResendEmailVerificationMessageCommand resendEmailVerificationMessageCommand,
+        CancellationToken cancellationToken)
+    {
+        await mediator.Send(resendEmailVerificationMessageCommand, cancellationToken);
+        
+        return NoContent();
+    }
+
+    [HttpPost("forgot-password")]
+    public async ValueTask<IActionResult> ForgotPassword(
+        [FromBody] string emailAddress,
+        CancellationToken cancellationToken)
+    {
+        var forgotPasswordEvent = new ForgotPasswordEvent { EmailAddress = emailAddress };
+        await eventBusBroker.PublishLocalAsync(forgotPasswordEvent, cancellationToken);
+        
+        return Accepted();
+    }
+
+    [HttpPost("reset-password")]
+    public async ValueTask<IActionResult> ResetPassword(
+        [FromBody] ResetPasswordCommand resetPasswordCommand,
+        CancellationToken cancellationToken)
+    {
+        await mediator.Send(resetPasswordCommand, cancellationToken);
         
         return NoContent();
     }

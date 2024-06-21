@@ -6,10 +6,14 @@ using Gymphony.Api.Filters;
 using Gymphony.Application.Common.EventBus.Brokers;
 using Gymphony.Application.Common.Identity.Models.Settings;
 using Gymphony.Application.Common.Identity.Services;
+using Gymphony.Application.Common.Notifications.Brokers;
+using Gymphony.Application.Common.Notifications.Models.Settings;
+using Gymphony.Application.Common.Settings;
 using Gymphony.Domain.Brokers;
 using Gymphony.Infrastructure.Common.EventBus.Brokers;
 using Gymphony.Infrastructure.Common.Identity.Brokers;
 using Gymphony.Infrastructure.Common.Identity.Services;
+using Gymphony.Infrastructure.Common.Notifications.Brokers;
 using Gymphony.Persistence.DataContexts;
 using Gymphony.Persistence.Extensions;
 using Gymphony.Persistence.Interceptors;
@@ -94,6 +98,16 @@ public static partial class HostConfigurations
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddScoped<IRequestContextProvider, RequestContextProvider>();
+
+        if (builder.Environment.IsDevelopment())
+            builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection(nameof(ApiSettings)));
+        else
+            builder.Services.Configure<ApiSettings>(options =>
+            {
+                options.BaseAddress = Environment.GetEnvironmentVariable("ApiBaseAddress")!;
+                options.EmailVerificationEndpointAddress =
+                    Environment.GetEnvironmentVariable("EmailVerificationEndpointAddress")!;
+            });
         
         return builder;
     }
@@ -101,9 +115,6 @@ public static partial class HostConfigurations
     private static WebApplicationBuilder AddJwtAuthentication(this WebApplicationBuilder builder)
     {
         builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(nameof(JwtSettings)));
-
-        builder.Services.Configure<RefreshTokenSettings>(
-            builder.Configuration.GetSection(nameof(RefreshTokenSettings)));
 
         var jwtSecretKey = (builder.Environment.IsDevelopment()
             ? builder.Configuration["JwtSecretKey"]
@@ -135,14 +146,10 @@ public static partial class HostConfigurations
                     };
                 }
             );
-        
-        builder.Services
-            .AddTransient<IAccessTokenGeneratorService, AccessTokenGeneratorService>()
-            .AddTransient<IRefreshTokenGeneratorService, RefreshTokenGeneratorService>();
 
-        builder.Services
-            .AddScoped<IAccessTokenRepository, AccessTokenRepository>()
-            .AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        builder.Services.AddTransient<IAccessTokenGeneratorService, AccessTokenGeneratorService>();
+
+        builder.Services.AddScoped<IAccessTokenRepository, AccessTokenRepository>();
         
         return builder;
     }
@@ -159,8 +166,50 @@ public static partial class HostConfigurations
     
     private static WebApplicationBuilder AddIdentityInfrastructure(this WebApplicationBuilder builder)
     {
+        builder.Services.Configure<RefreshTokenSettings>(
+            builder.Configuration.GetSection(nameof(RefreshTokenSettings)));
+
+        builder.Services.Configure<VerificationTokenSettings>(
+            builder.Configuration.GetSection(nameof(VerificationTokenSettings)));
+
+        builder.Services.Configure<PasswordSettings>(
+            builder.Configuration.GetSection(nameof(PasswordSettings)));
+        
         builder.Services
+            .AddTransient<ITokenGeneratorService, TokenGeneratorService>()
+            .AddTransient<IRefreshTokenGeneratorService, RefreshTokenGeneratorService>()
+            .AddTransient<IVerificationTokenGeneratorService, VerificationTokenGeneratorService>()
             .AddTransient<IPasswordHasherService, PasswordHasherService>();
+
+        builder.Services
+            .AddScoped<IRefreshTokenRepository, RefreshTokenRepository>()
+            .AddScoped<IVerificationTokenRepository, VerificationTokenRepository>();
+        
+        return builder;
+    }
+
+    private static WebApplicationBuilder AddNotificationsInfrastructure(this WebApplicationBuilder builder)
+    {
+        if (builder.Environment.IsDevelopment())
+            builder.Services.Configure<SmtpEmailSenderSettings>(
+                builder.Configuration.GetSection(nameof(SmtpEmailSenderSettings)));
+        else
+            builder.Services.Configure<SmtpEmailSenderSettings>(options =>
+            {
+                options.Host = Environment.GetEnvironmentVariable("SmtpHost")!;
+                options.Port = Convert.ToInt32(Environment.GetEnvironmentVariable("SmtpPort"));
+                options.CredentialAddress = Environment.GetEnvironmentVariable("SmtpCredentialAddress")!;
+                options.Password = Environment.GetEnvironmentVariable("SmtpPassword")!;
+            });
+
+        builder.Services.Configure<NotificationTemplateRegexPatterns>(
+            builder.Configuration.GetSection(nameof(NotificationTemplateRegexPatterns)));
+        
+        builder.Services
+            .AddScoped<INotificationTemplateRepository, NotificationTemplateRepository>()
+            .AddScoped<INotificationHistoryRepository, NotificationHistoryRepository>();
+
+        builder.Services.AddTransient<IEmailSenderBroker, EmailSenderBroker>();
         
         return builder;
     }

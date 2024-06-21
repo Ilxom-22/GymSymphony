@@ -42,6 +42,78 @@ namespace Gymphony.Persistence.Migrations
                     b.ToTable("AccessTokens");
                 });
 
+            modelBuilder.Entity("Gymphony.Domain.Entities.NotificationHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("CreatedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset?>("ModifiedTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("NotificationMethod")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("RecipientId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("SentTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("TemplateId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TemplateId");
+
+                    b.ToTable("NotificationHistories");
+                });
+
+            modelBuilder.Entity("Gymphony.Domain.Entities.NotificationTemplate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Type")
+                        .IsUnique();
+
+                    b.ToTable("NotificationTemplates");
+                });
+
             modelBuilder.Entity("Gymphony.Domain.Entities.RefreshToken", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -113,6 +185,36 @@ namespace Gymphony.Persistence.Migrations
                     b.UseTphMappingStrategy();
                 });
 
+            modelBuilder.Entity("Gymphony.Domain.Entities.VerificationToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTimeOffset>("ExpiryTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Token")
+                        .IsUnique();
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("VerificationTokens");
+                });
+
             modelBuilder.Entity("Gymphony.Domain.Entities.Admin", b =>
                 {
                     b.HasBaseType("Gymphony.Domain.Entities.User");
@@ -147,6 +249,17 @@ namespace Gymphony.Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Gymphony.Domain.Entities.NotificationHistory", b =>
+                {
+                    b.HasOne("Gymphony.Domain.Entities.NotificationTemplate", "Template")
+                        .WithMany()
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Template");
+                });
+
             modelBuilder.Entity("Gymphony.Domain.Entities.RefreshToken", b =>
                 {
                     b.HasOne("Gymphony.Domain.Entities.User", "User")
@@ -158,11 +271,24 @@ namespace Gymphony.Persistence.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Gymphony.Domain.Entities.VerificationToken", b =>
+                {
+                    b.HasOne("Gymphony.Domain.Entities.User", "User")
+                        .WithOne("VerificationToken")
+                        .HasForeignKey("Gymphony.Domain.Entities.VerificationToken", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Gymphony.Domain.Entities.User", b =>
                 {
                     b.Navigation("AccessToken");
 
                     b.Navigation("RefreshToken");
+
+                    b.Navigation("VerificationToken");
                 });
 #pragma warning restore 612, 618
         }

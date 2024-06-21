@@ -32,7 +32,7 @@ public class RemoveAdminCommandHandler(
         {
             RemovedAdmin = foundAdmin,
             RemovedByAdminId = actionAdminId
-        });
+        }, cancellationToken);
 
         return true;
     }

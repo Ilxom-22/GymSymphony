@@ -1,4 +1,3 @@
-using System.Security.Authentication;
 using AutoMapper;
 using Gymphony.Application.Common.EventBus.Brokers;
 using Gymphony.Application.Common.Identity.Commands;
@@ -7,7 +6,6 @@ using Gymphony.Application.Common.Identity.Models.Dtos;
 using Gymphony.Application.Common.Identity.Services;
 using Gymphony.Domain.Brokers;
 using Gymphony.Domain.Common.Commands;
-using Gymphony.Domain.Common.Queries;
 using Gymphony.Domain.Entities;
 using Gymphony.Persistence.Repositories.Interfaces;
 
@@ -29,7 +27,7 @@ public class AdminSignUpCommandHandler(
         var admin = await adminRepository
             .CreateAsync(adminData, cancellationToken: cancellationToken);
         
-        await eventBusBroker.PublishLocalAsync(new AdminCreatedEvent { Admin = admin, TemporaryPassword = request.SignUpDetails.AuthData });
+        await eventBusBroker.PublishLocalAsync(new AdminCreatedEvent { Admin = admin, TemporaryPassword = request.SignUpDetails.AuthData }, cancellationToken);
 
         return mapper.Map<UserDto>(admin);
     }
