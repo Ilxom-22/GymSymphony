@@ -20,6 +20,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<NotificationHistory> NotificationHistories => Set<NotificationHistory>();
 
     public DbSet<VerificationToken> VerificationTokens => Set<VerificationToken>();
+
+    public DbSet<MembershipPlan> MembershipPlans => Set<MembershipPlan>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
