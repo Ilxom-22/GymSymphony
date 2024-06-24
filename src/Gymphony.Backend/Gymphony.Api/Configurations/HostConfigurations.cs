@@ -17,7 +17,8 @@ public static partial class HostConfigurations
             .AddNotificationsInfrastructure()
             .AddMembershipPlansInfrastructure()
             .AddValidators()
-            .AddMappers();
+            .AddMappers()
+            .AddPaymentInfrastructure();
         
         return builder;
     }
