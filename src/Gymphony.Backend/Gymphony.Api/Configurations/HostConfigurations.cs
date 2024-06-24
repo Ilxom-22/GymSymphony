@@ -15,6 +15,7 @@ public static partial class HostConfigurations
             .AddIdentityInfrastructure()
             .AddUsersInfrastructure()
             .AddNotificationsInfrastructure()
+            .AddMembershipPlansInfrastructure()
             .AddValidators()
             .AddMappers();
         
