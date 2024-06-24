@@ -1,5 +1,6 @@
 using Gymphony.Domain.Common.Entities;
 using Gymphony.Domain.Enums;
+using Gymphony.Domain.Structs;
 
 namespace Gymphony.Domain.Entities;
 
@@ -9,8 +10,6 @@ public class MembershipPlan : AuditableEntity, ICreationAuditableEntity,
     public string Name { get; set; } = default!;
 
     public string Description { get; set; } = default!;
-
-    public int DurationInDays { get; set; }
 
     public ContentStatus Status { get; set; } = ContentStatus.Draft;
 
@@ -25,4 +24,17 @@ public class MembershipPlan : AuditableEntity, ICreationAuditableEntity,
     public Admin? CreatedBy { get; set; }
 
     public Admin? ModifiedBy { get; set; }
+
+    public Duration Duration
+    {
+        get => new Duration { Days = _days, Months = _months };
+        set
+        {
+            _days = value.Days;
+            _months = value.Months;
+        }
+    }
+
+    private byte _days;
+    private byte _months;
 }
