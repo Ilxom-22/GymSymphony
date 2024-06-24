@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gymphony.Api.Controllers;
 
+[Authorize(Roles = "Admin")]
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "Admin")]
 public class AdminsController(IMediator mediator) : ControllerBase
 {
     [HttpPost("sign-up")]

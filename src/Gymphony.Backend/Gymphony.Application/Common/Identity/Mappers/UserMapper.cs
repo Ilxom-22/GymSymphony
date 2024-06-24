@@ -11,8 +11,16 @@ public class UserMapper : Profile
         CreateMap<SignUpDetails, Admin>();
         CreateMap<SignUpDetails, Member>();
         
-        CreateMap<Member, UserDto>();
-        CreateMap<Admin, UserDto>();
-        CreateMap<User, UserDto>();
+        CreateMap<Member, UserDto>()
+            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.ToString()))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+        
+        CreateMap<Admin, UserDto>()
+            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.ToString()))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+        
+        CreateMap<User, UserDto>()
+            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.ToString()))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
     }
 }

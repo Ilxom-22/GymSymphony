@@ -9,11 +9,13 @@ using Gymphony.Application.Common.Identity.Services;
 using Gymphony.Application.Common.Notifications.Brokers;
 using Gymphony.Application.Common.Notifications.Models.Settings;
 using Gymphony.Application.Common.Settings;
+using Gymphony.Application.MembershipPlans.Services;
 using Gymphony.Domain.Brokers;
 using Gymphony.Infrastructure.Common.EventBus.Brokers;
 using Gymphony.Infrastructure.Common.Identity.Brokers;
 using Gymphony.Infrastructure.Common.Identity.Services;
 using Gymphony.Infrastructure.Common.Notifications.Brokers;
+using Gymphony.Infrastructure.MembershipPlans.Services;
 using Gymphony.Persistence.DataContexts;
 using Gymphony.Persistence.Extensions;
 using Gymphony.Persistence.Interceptors;
@@ -210,6 +212,18 @@ public static partial class HostConfigurations
             .AddScoped<INotificationHistoryRepository, NotificationHistoryRepository>();
 
         builder.Services.AddTransient<IEmailSenderBroker, EmailSenderBroker>();
+        
+        return builder;
+    }
+
+    private static WebApplicationBuilder AddMembershipPlansInfrastructure(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddScoped<IMembershipPlanRepository, MembershipPlanRepository>();
+
+        builder.Services
+            .AddTransient<IMembershipPlanMapperService, MembershipPlanMapperService>();
+
+        builder.Services.AddHostedService<MembershipPlanStatusUpdaterBackgroundService>();
         
         return builder;
     }
