@@ -1,4 +1,5 @@
 using AutoMapper;
+using Gymphony.Application.Common.Payments.Models.Dtos;
 using Gymphony.Application.MembershipPlans.Commands;
 using Gymphony.Application.MembershipPlans.Models.Dtos;
 using Gymphony.Domain.Entities;
@@ -21,5 +22,7 @@ public class MembershipPlanMapper : Profile
             .ForMember(dest => dest.DurationUnit, opt => opt.MapFrom(src => src.DurationUnit.ToString()));
 
         CreateMap<UpdateDraftMembershipPlanCommand, DraftMembershipPlanDto>();
+
+        CreateMap<MembershipPlan, StripeProductDetails>();
     }
 }
