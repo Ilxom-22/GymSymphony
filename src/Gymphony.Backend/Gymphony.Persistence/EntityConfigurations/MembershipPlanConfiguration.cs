@@ -15,15 +15,7 @@ public class MembershipPlanConfiguration : IEntityTypeConfiguration<MembershipPl
         builder.Property(plan => plan.Description).IsRequired().HasMaxLength(2048);
         builder.Property(plan => plan.Price).IsRequired().HasColumnType("numeric(18,2)");
 
-        builder.Property<byte>("_days")
-            .HasColumnName("Duration.Days")
-            .IsRequired();
-
-        builder.Property<byte>("_months")
-            .HasColumnName("Duration.Months")
-            .IsRequired();
-
-        builder.Ignore(plan => plan.Duration);
+        builder.OwnsOne(plan => plan.StripeDetails);
 
         builder.HasOne<Admin>(plan => plan.CreatedBy)
             .WithMany()

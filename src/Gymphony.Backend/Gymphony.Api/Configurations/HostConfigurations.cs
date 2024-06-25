@@ -5,6 +5,7 @@ public static partial class HostConfigurations
     public static WebApplicationBuilder Configure(this WebApplicationBuilder builder)
     {
         builder
+            .AddCors()
             .AddDevTools()
             .AddExposers()
             .AddPersistence()
@@ -17,7 +18,8 @@ public static partial class HostConfigurations
             .AddNotificationsInfrastructure()
             .AddMembershipPlansInfrastructure()
             .AddValidators()
-            .AddMappers();
+            .AddMappers()
+            .AddPaymentInfrastructure();
         
         return builder;
     }
@@ -25,6 +27,7 @@ public static partial class HostConfigurations
     public static async ValueTask<WebApplication> ConfigureAsync(this WebApplication app)
     {
         app
+            .UseCors()
             .UseDevTools()
             .UseExposers();
 

@@ -8,6 +8,8 @@ using Gymphony.Application.Common.Identity.Models.Settings;
 using Gymphony.Application.Common.Identity.Services;
 using Gymphony.Application.Common.Notifications.Brokers;
 using Gymphony.Application.Common.Notifications.Models.Settings;
+using Gymphony.Application.Common.Payments.Brokers;
+using Gymphony.Application.Common.Payments.Models.Settings;
 using Gymphony.Application.Common.Settings;
 using Gymphony.Application.MembershipPlans.Services;
 using Gymphony.Domain.Brokers;
@@ -15,6 +17,8 @@ using Gymphony.Infrastructure.Common.EventBus.Brokers;
 using Gymphony.Infrastructure.Common.Identity.Brokers;
 using Gymphony.Infrastructure.Common.Identity.Services;
 using Gymphony.Infrastructure.Common.Notifications.Brokers;
+using Gymphony.Infrastructure.Common.Payments.Brokers;
+using Gymphony.Infrastructure.Common.Payments.Services;
 using Gymphony.Infrastructure.MembershipPlans.Services;
 using Gymphony.Persistence.DataContexts;
 using Gymphony.Persistence.Extensions;
@@ -24,6 +28,7 @@ using Gymphony.Persistence.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Stripe;
 
 namespace Gymphony.Api.Configurations;
 
@@ -241,6 +246,49 @@ public static partial class HostConfigurations
 
         return builder;
     }
+
+    private static WebApplicationBuilder AddPaymentInfrastructure(this WebApplicationBuilder builder)
+    {
+        if (builder.Environment.IsDevelopment())
+        {
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection(nameof(StripeSettings)));
+
+            StripeConfiguration.ApiKey = builder.Configuration["StripeSettings:SecretKey"];
+        }
+        else
+        {
+            builder.Services.Configure<StripeSettings>(options =>
+            {
+                options.PublicKey = Environment.GetEnvironmentVariable("StripePublicKey")!;
+                options.SecretKey = Environment.GetEnvironmentVariable("StripeSecretKey")!;
+            });
+            
+            StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("StripeSecretKey");
+        }
+
+        builder.Services
+            .AddSingleton<StripeProductService>()
+            .AddSingleton<StripePriceService>()
+            .AddSingleton<StripeSessionService>();
+
+        builder.Services
+            .AddSingleton<IStripeProductBroker, StripeProductBroker>()
+            .AddSingleton<IStripePriceBroker, StripePriceBroker>()
+            .AddSingleton<IStripeSessionBroker, StripeSessionBroker>();
+
+        return builder;
+    }
+    
+    private static WebApplicationBuilder AddCors(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddCors(options => options.AddPolicy("AllowSpecificOrigin",
+            policy => policy
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod()));
+
+        return builder;
+    }
     
     private static async ValueTask<WebApplication> MigrateDatabaseSchemaAsync(this WebApplication app)
     {
@@ -269,6 +317,13 @@ public static partial class HostConfigurations
     private static WebApplication UseExposers(this WebApplication app)
     {
         app.MapControllers();
+
+        return app;
+    }
+    
+    private static WebApplication UseCors(this WebApplication app)
+    {
+        app.UseCors("AllowSpecificOrigin");
 
         return app;
     }
