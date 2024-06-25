@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gymphony.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240624001913_MembershipPlans_Migration")]
+    [Migration("20240625013201_MembershipPlans_Migration")]
     partial class MembershipPlans_Migration
     {
         /// <inheritdoc />
@@ -65,6 +65,12 @@ namespace Gymphony.Persistence.Migrations
                         .HasMaxLength(2048)
                         .HasColumnType("character varying(2048)");
 
+                    b.Property<byte>("DurationCount")
+                        .HasColumnType("smallint");
+
+                    b.Property<int>("DurationUnit")
+                        .HasColumnType("integer");
+
                     b.Property<Guid?>("ModifiedByUserId")
                         .HasColumnType("uuid");
 
@@ -81,14 +87,6 @@ namespace Gymphony.Persistence.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
-
-                    b.Property<byte>("_days")
-                        .HasColumnType("smallint")
-                        .HasColumnName("Duration.Days");
-
-                    b.Property<byte>("_months")
-                        .HasColumnType("smallint")
-                        .HasColumnName("Duration.Months");
 
                     b.HasKey("Id");
 
@@ -323,9 +321,32 @@ namespace Gymphony.Persistence.Migrations
                         .HasForeignKey("ModifiedByUserId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.OwnsOne("Gymphony.Domain.Entities.StripeDetails", "StripeDetails", b1 =>
+                        {
+                            b1.Property<Guid>("MembershipPlanId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("PriceId")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.Property<string>("ProductId")
+                                .IsRequired()
+                                .HasColumnType("text");
+
+                            b1.HasKey("MembershipPlanId");
+
+                            b1.ToTable("MembershipPlans");
+
+                            b1.WithOwner()
+                                .HasForeignKey("MembershipPlanId");
+                        });
+
                     b.Navigation("CreatedBy");
 
                     b.Navigation("ModifiedBy");
+
+                    b.Navigation("StripeDetails");
                 });
 
             modelBuilder.Entity("Gymphony.Domain.Entities.NotificationHistory", b =>
