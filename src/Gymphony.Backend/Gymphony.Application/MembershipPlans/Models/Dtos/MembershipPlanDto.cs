@@ -1,5 +1,3 @@
-using Gymphony.Domain.Structs;
-
 namespace Gymphony.Application.MembershipPlans.Models.Dtos;
 
 public class MembershipPlanDto
@@ -10,7 +8,9 @@ public class MembershipPlanDto
     
     public string Description { get; set; } = default!;
 
-    public Duration Duration { get; set; }
+    public string DurationUnit { get; set; } = default!;
+
+    public byte DurationCount { get; set; }
 
     public string Status { get; set; } = default!;
 
