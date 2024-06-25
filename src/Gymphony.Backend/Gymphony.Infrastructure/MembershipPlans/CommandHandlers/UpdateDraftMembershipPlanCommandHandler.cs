@@ -34,7 +34,8 @@ public class UpdateDraftMembershipPlanCommandHandler(IMapper mapper,
 
         foundPlan.Name = request.Name;
         foundPlan.Description = request.Description;
-        foundPlan.Duration = request.Duration;
+        foundPlan.DurationUnit = Enum.Parse<DurationUnit>(request.DurationUnit);
+        foundPlan.DurationCount = request.DurationCount;
         foundPlan.Price = request.Price;
 
         await membershipPlanRepository
