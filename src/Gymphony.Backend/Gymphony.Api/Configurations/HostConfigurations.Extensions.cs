@@ -8,6 +8,7 @@ using Gymphony.Application.Common.Identity.Models.Settings;
 using Gymphony.Application.Common.Identity.Services;
 using Gymphony.Application.Common.Notifications.Brokers;
 using Gymphony.Application.Common.Notifications.Models.Settings;
+using Gymphony.Application.Common.Payments.Brokers;
 using Gymphony.Application.Common.Payments.Models.Settings;
 using Gymphony.Application.Common.Settings;
 using Gymphony.Application.MembershipPlans.Services;
@@ -16,6 +17,7 @@ using Gymphony.Infrastructure.Common.EventBus.Brokers;
 using Gymphony.Infrastructure.Common.Identity.Brokers;
 using Gymphony.Infrastructure.Common.Identity.Services;
 using Gymphony.Infrastructure.Common.Notifications.Brokers;
+using Gymphony.Infrastructure.Common.Payments.Brokers;
 using Gymphony.Infrastructure.Common.Payments.Services;
 using Gymphony.Infrastructure.MembershipPlans.Services;
 using Gymphony.Persistence.DataContexts;
@@ -264,8 +266,13 @@ public static partial class HostConfigurations
             StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("StripeSecretKey");
         }
 
-        builder.Services.AddSingleton<StripeProductService>();
-        builder.Services.AddSingleton<StripePriceService>();
+        builder.Services
+            .AddSingleton<StripeProductService>()
+            .AddSingleton<StripePriceService>();
+
+        builder.Services
+            .AddSingleton<IStripeProductBroker, StripeProductBroker>()
+            .AddSingleton<IStripePriceBroker, StripePriceBroker>();
 
         return builder;
     }
