@@ -24,4 +24,9 @@ public class MemberRepository(AppDbContext dbContext) :
     {
         return base.CreateAsync(member, saveChanges, cancellationToken);
     }
+
+    public new ValueTask<Member> UpdateAsync(Member member, bool saveChanges = true, CancellationToken cancellationToken = default)
+    {
+        return base.UpdateAsync(member, saveChanges, cancellationToken);
+    }
 }
