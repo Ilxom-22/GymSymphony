@@ -70,7 +70,7 @@ public class PaymentsController(IMediator mediator,
         }
         catch (StripeException ex)
         {
-            return BadRequest();
+            return BadRequest(ex.StripeError.Message);
         }
     }
 }

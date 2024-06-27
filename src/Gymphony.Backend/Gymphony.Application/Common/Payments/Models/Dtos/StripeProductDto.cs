@@ -1,3 +1,5 @@
+using Gymphony.Domain.Enums;
+
 namespace Gymphony.Application.Common.Payments.Models.Dtos;
 
 public class StripeProductDto
@@ -11,4 +13,6 @@ public class StripeProductDto
     public string? DefaultPrice { get; set; }
 
     public bool Active { get; set; } = true;
+    
+    public ProductType Type { get; set; }
 }

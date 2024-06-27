@@ -22,6 +22,11 @@ public class StripeProductBroker(IMapper mapper, StripeProductService stripeProd
     {
         var productCreateOptions = mapper.Map<ProductCreateOptions>(product);
 
+        productCreateOptions.Metadata = new Dictionary<string, string>
+        {
+            { "type", product.Type.ToString() }
+        };
+
         var stripeProduct = await stripeProductService
             .CreateAsync(productCreateOptions, cancellationToken: cancellationToken);
 

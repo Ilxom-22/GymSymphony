@@ -23,6 +23,7 @@ public class MembershipPlanMapper : Profile
 
         CreateMap<UpdateDraftMembershipPlanCommand, DraftMembershipPlanDto>();
 
-        CreateMap<MembershipPlan, StripeProductDetails>();
+        CreateMap<MembershipPlan, StripeProductDetails>()
+            .ForMember(dest => dest.Type, opt => opt.MapFrom(src => ProductType.MembershipPlan));
     }
 }
