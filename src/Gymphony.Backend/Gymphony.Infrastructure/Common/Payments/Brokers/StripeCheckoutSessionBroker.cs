@@ -4,11 +4,11 @@ using Stripe.Checkout;
 
 namespace Gymphony.Infrastructure.Common.Payments.Brokers;
 
-public class StripeSessionBroker(StripeSessionService stripeSessionService) : IStripeSessionBroker
+public class StripeCheckoutSessionBroker(StripeCheckoutSessionService stripeCheckoutSessionService) : IStripeCheckoutSessionBroker
 {
     public async ValueTask<Session> CreateAsync(SessionCreateOptions sessionCreateOptions, CancellationToken cancellationToken = default)
     {
-        return await stripeSessionService
+        return await stripeCheckoutSessionService
             .CreateAsync(sessionCreateOptions, cancellationToken: cancellationToken);
     }
 }
