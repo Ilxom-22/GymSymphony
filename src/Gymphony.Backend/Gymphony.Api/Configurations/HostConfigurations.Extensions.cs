@@ -268,11 +268,24 @@ public static partial class HostConfigurations
 
         builder.Services
             .AddSingleton<StripeProductService>()
-            .AddSingleton<StripePriceService>();
+            .AddSingleton<StripePriceService>()
+            .AddSingleton<StripeSessionService>();
 
         builder.Services
             .AddSingleton<IStripeProductBroker, StripeProductBroker>()
-            .AddSingleton<IStripePriceBroker, StripePriceBroker>();
+            .AddSingleton<IStripePriceBroker, StripePriceBroker>()
+            .AddSingleton<IStripeSessionBroker, StripeSessionBroker>();
+
+        return builder;
+    }
+    
+    private static WebApplicationBuilder AddCors(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddCors(options => options.AddPolicy("AllowSpecificOrigin",
+            policy => policy
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod()));
 
         return builder;
     }
@@ -304,6 +317,13 @@ public static partial class HostConfigurations
     private static WebApplication UseExposers(this WebApplication app)
     {
         app.MapControllers();
+
+        return app;
+    }
+    
+    private static WebApplication UseCors(this WebApplication app)
+    {
+        app.UseCors("AllowSpecificOrigin");
 
         return app;
     }
