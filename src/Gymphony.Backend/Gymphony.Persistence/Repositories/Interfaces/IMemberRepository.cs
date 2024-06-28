@@ -14,4 +14,7 @@ public interface IMemberRepository
         Member member, 
         bool saveChanges = true,
         CancellationToken cancellationToken = default);
+
+    ValueTask<Member> UpdateAsync(Member member, bool saveChanges = true,
+        CancellationToken cancellationToken = default);
 }
