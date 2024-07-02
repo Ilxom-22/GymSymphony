@@ -37,6 +37,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<CourseSubscription> CourseSubscriptions => Set<CourseSubscription>();
 
     #endregion
+
+    #region Course Schedules
+    public DbSet<CourseSchedule> CourseSchedules => Set<CourseSchedule>();
+    public DbSet<CourseScheduleEnrollment> CourseScheduleEnrollments => Set<CourseScheduleEnrollment>();
+
+    #endregion
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
