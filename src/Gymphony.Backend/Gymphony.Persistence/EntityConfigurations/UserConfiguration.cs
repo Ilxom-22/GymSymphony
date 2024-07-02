@@ -1,3 +1,4 @@
+using System.Runtime;
 using Gymphony.Domain.Entities;
 using Gymphony.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +18,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         
         builder.HasDiscriminator(user => user.Role)
             .HasValue<Admin>(Role.Admin)
+            .HasValue<Staff>(Role.Staff)
             .HasValue<Member>(Role.Member);
     }
 }

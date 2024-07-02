@@ -3,6 +3,7 @@ using System;
 using Gymphony.Persistence.DataContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gymphony.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240702103828_Subscriptions_Migration")]
+    partial class Subscriptions_Migration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,36 +24,6 @@ namespace Gymphony.Persistence.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("CourseScheduleStaff", b =>
-                {
-                    b.Property<Guid>("CourseSchedulesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("InstructorsId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("CourseSchedulesId", "InstructorsId");
-
-                    b.HasIndex("InstructorsId");
-
-                    b.ToTable("CourseScheduleStaff");
-                });
-
-            modelBuilder.Entity("CourseStaff", b =>
-                {
-                    b.Property<Guid>("CoursesId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("InstructorsId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("CoursesId", "InstructorsId");
-
-                    b.HasIndex("InstructorsId");
-
-                    b.ToTable("CourseStaff");
-                });
 
             modelBuilder.Entity("Gymphony.Domain.Entities.AccessToken", b =>
                 {
@@ -70,93 +43,6 @@ namespace Gymphony.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("AccessTokens");
-                });
-
-            modelBuilder.Entity("Gymphony.Domain.Entities.CourseSchedule", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CourseId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("CreatedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset>("CreatedTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("Day")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid?>("DeletedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset?>("DeletedTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<TimeOnly>("EndTime")
-                        .HasColumnType("time without time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("ModifiedByUserId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset?>("ModifiedTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<TimeOnly>("StartTime")
-                        .HasColumnType("time without time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.HasIndex("CreatedByUserId");
-
-                    b.HasIndex("DeletedByUserId");
-
-                    b.HasIndex("ModifiedByUserId");
-
-                    b.ToTable("CourseSchedules");
-                });
-
-            modelBuilder.Entity("Gymphony.Domain.Entities.CourseScheduleEnrollment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CourseScheduleId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("CourseSubscriptionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTimeOffset?>("DeletedTime")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("EnrollmentDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid>("MemberId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseScheduleId");
-
-                    b.HasIndex("CourseSubscriptionId");
-
-                    b.HasIndex("MemberId");
-
-                    b.ToTable("CourseScheduleEnrollments");
                 });
 
             modelBuilder.Entity("Gymphony.Domain.Entities.NotificationHistory", b =>
@@ -559,36 +445,6 @@ namespace Gymphony.Persistence.Migrations
                     b.HasDiscriminator().HasValue(1);
                 });
 
-            modelBuilder.Entity("CourseScheduleStaff", b =>
-                {
-                    b.HasOne("Gymphony.Domain.Entities.CourseSchedule", null)
-                        .WithMany()
-                        .HasForeignKey("CourseSchedulesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Gymphony.Domain.Entities.Staff", null)
-                        .WithMany()
-                        .HasForeignKey("InstructorsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("CourseStaff", b =>
-                {
-                    b.HasOne("Gymphony.Domain.Entities.Course", null)
-                        .WithMany()
-                        .HasForeignKey("CoursesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Gymphony.Domain.Entities.Staff", null)
-                        .WithMany()
-                        .HasForeignKey("InstructorsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Gymphony.Domain.Entities.AccessToken", b =>
                 {
                     b.HasOne("Gymphony.Domain.Entities.User", "User")
@@ -598,65 +454,6 @@ namespace Gymphony.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Gymphony.Domain.Entities.CourseSchedule", b =>
-                {
-                    b.HasOne("Gymphony.Domain.Entities.Course", "Course")
-                        .WithMany("Schedules")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Gymphony.Domain.Entities.Admin", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedByUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Gymphony.Domain.Entities.Admin", "DeletedBy")
-                        .WithMany()
-                        .HasForeignKey("DeletedByUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Gymphony.Domain.Entities.Admin", "ModifiedBy")
-                        .WithMany()
-                        .HasForeignKey("ModifiedByUserId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Course");
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("DeletedBy");
-
-                    b.Navigation("ModifiedBy");
-                });
-
-            modelBuilder.Entity("Gymphony.Domain.Entities.CourseScheduleEnrollment", b =>
-                {
-                    b.HasOne("Gymphony.Domain.Entities.CourseSchedule", "CourseSchedule")
-                        .WithMany("Enrollments")
-                        .HasForeignKey("CourseScheduleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Gymphony.Domain.Entities.CourseSubscription", "CourseSubscription")
-                        .WithMany()
-                        .HasForeignKey("CourseSubscriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Gymphony.Domain.Entities.Member", "Member")
-                        .WithMany()
-                        .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CourseSchedule");
-
-                    b.Navigation("CourseSubscription");
-
-                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("Gymphony.Domain.Entities.NotificationHistory", b =>
@@ -812,11 +609,6 @@ namespace Gymphony.Persistence.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
                 });
 
-            modelBuilder.Entity("Gymphony.Domain.Entities.CourseSchedule", b =>
-                {
-                    b.Navigation("Enrollments");
-                });
-
             modelBuilder.Entity("Gymphony.Domain.Entities.Payment", b =>
                 {
                     b.Navigation("SubscriptionPeriod");
@@ -838,8 +630,6 @@ namespace Gymphony.Persistence.Migrations
 
             modelBuilder.Entity("Gymphony.Domain.Entities.Course", b =>
                 {
-                    b.Navigation("Schedules");
-
                     b.Navigation("Subscriptions");
                 });
 
