@@ -3,6 +3,7 @@ using System;
 using Gymphony.Persistence.DataContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gymphony.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240627070315_Payments_Migration")]
+    partial class Payments_Migration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,7 +42,7 @@ namespace Gymphony.Persistence.Migrations
                     b.HasIndex("Token")
                         .IsUnique();
 
-                    b.ToTable("AccessTokens", (string)null);
+                    b.ToTable("AccessTokens");
                 });
 
             modelBuilder.Entity("Gymphony.Domain.Entities.MembershipPlan", b =>
@@ -94,7 +97,7 @@ namespace Gymphony.Persistence.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("MembershipPlans", (string)null);
+                    b.ToTable("MembershipPlans");
                 });
 
             modelBuilder.Entity("Gymphony.Domain.Entities.NotificationHistory", b =>
@@ -140,7 +143,7 @@ namespace Gymphony.Persistence.Migrations
 
                     b.HasIndex("TemplateId");
 
-                    b.ToTable("NotificationHistories", (string)null);
+                    b.ToTable("NotificationHistories");
                 });
 
             modelBuilder.Entity("Gymphony.Domain.Entities.NotificationTemplate", b =>
@@ -166,7 +169,7 @@ namespace Gymphony.Persistence.Migrations
                     b.HasIndex("Type")
                         .IsUnique();
 
-                    b.ToTable("NotificationTemplates", (string)null);
+                    b.ToTable("NotificationTemplates");
                 });
 
             modelBuilder.Entity("Gymphony.Domain.Entities.Payment", b =>
@@ -188,7 +191,7 @@ namespace Gymphony.Persistence.Migrations
 
                     b.HasIndex("MemberId");
 
-                    b.ToTable("Payments", (string)null);
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("Gymphony.Domain.Entities.RefreshToken", b =>
@@ -208,7 +211,7 @@ namespace Gymphony.Persistence.Migrations
                     b.HasIndex("Token")
                         .IsUnique();
 
-                    b.ToTable("RefreshTokens", (string)null);
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("Gymphony.Domain.Entities.User", b =>
@@ -255,7 +258,7 @@ namespace Gymphony.Persistence.Migrations
                     b.HasIndex("EmailAddress")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
 
                     b.HasDiscriminator<int>("Role");
 
@@ -289,7 +292,7 @@ namespace Gymphony.Persistence.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("VerificationTokens", (string)null);
+                    b.ToTable("VerificationTokens");
                 });
 
             modelBuilder.Entity("Gymphony.Domain.Entities.Admin", b =>
@@ -343,7 +346,7 @@ namespace Gymphony.Persistence.Migrations
                         .HasForeignKey("ModifiedByUserId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.OwnsOne("Gymphony.Domain.Entities.MembershipPlan.StripeDetails#Gymphony.Domain.Entities.StripeDetails", "StripeDetails", b1 =>
+                    b.OwnsOne("Gymphony.Domain.Entities.StripeDetails", "StripeDetails", b1 =>
                         {
                             b1.Property<Guid>("MembershipPlanId")
                                 .HasColumnType("uuid");
@@ -358,7 +361,7 @@ namespace Gymphony.Persistence.Migrations
 
                             b1.HasKey("MembershipPlanId");
 
-                            b1.ToTable("MembershipPlans", (string)null);
+                            b1.ToTable("MembershipPlans");
 
                             b1.WithOwner()
                                 .HasForeignKey("MembershipPlanId");
