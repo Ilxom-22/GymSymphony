@@ -6,5 +6,5 @@ public class Member : User
 
     public string? StripeCustomerId { get; set; }
 
-    public ICollection<Subscription>? Subscriptions { get; set; }
+    public virtual ICollection<Subscription>? Subscriptions { get; set; }
 }

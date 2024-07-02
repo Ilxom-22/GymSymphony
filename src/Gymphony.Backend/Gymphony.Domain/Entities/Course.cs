@@ -8,5 +8,9 @@ public class Course : Product
 
     public int EnrollmentsCountPerWeek { get; set; }
 
-    public ICollection<CourseSubscription>? Subscriptions { get; set; }
+    public virtual ICollection<Staff>? Instructors { get; set; }
+
+    public virtual ICollection<CourseSchedule>? Schedules { get; set; }
+
+    public virtual ICollection<CourseSubscription>? Subscriptions { get; set; }
 }
