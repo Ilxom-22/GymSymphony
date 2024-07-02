@@ -7,4 +7,6 @@ public class Course : Product
     public int SessionDurationInMinutes { get; set; }
 
     public int EnrollmentsCountPerWeek { get; set; }
+
+    public ICollection<CourseSubscription>? Subscriptions { get; set; }
 }

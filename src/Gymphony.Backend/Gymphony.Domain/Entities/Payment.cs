@@ -11,4 +11,6 @@ public class Payment : Entity
     public DateTimeOffset Date { get; set; }
 
     public Member? Member { get; set; }
+
+    public SubscriptionPeriod? SubscriptionPeriod { get; set; }
 }
