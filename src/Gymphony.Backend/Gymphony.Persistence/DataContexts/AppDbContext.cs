@@ -9,6 +9,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<User> Users => Set<User>();
     public DbSet<Admin> Admins => Set<Admin>();
     public DbSet<Member> Members => Set<Member>();
+    public DbSet<Staff> Staff => Set<Staff>();
     public DbSet<AccessToken> AccessTokens => Set<AccessToken>();
     public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
     
@@ -30,6 +31,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
     #region Subscription & Payments
     public DbSet<Payment> Payments => Set<Payment>();
+    public DbSet<SubscriptionPeriod> SubscriptionPeriods => Set<SubscriptionPeriod>();
+    public DbSet<Subscription> Subscriptions => Set<Subscription>();
+    public DbSet<MembershipPlanSubscription> MembershipPlanSubscriptions => Set<MembershipPlanSubscription>();
+    public DbSet<CourseSubscription> CourseSubscriptions => Set<CourseSubscription>();
 
     #endregion
     
