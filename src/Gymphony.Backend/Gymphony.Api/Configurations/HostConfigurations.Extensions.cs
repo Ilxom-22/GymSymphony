@@ -271,14 +271,16 @@ public static partial class HostConfigurations
             .AddSingleton<StripePriceService>()
             .AddSingleton<StripeCheckoutSessionService>()
             .AddSingleton<StripeBillingPortalSessionService>()
-            .AddSingleton<StripeCustomerService>();
+            .AddSingleton<StripeCustomerService>()
+            .AddSingleton<StripeSubscriptionService>();
 
         builder.Services
             .AddSingleton<IStripeProductBroker, StripeProductBroker>()
             .AddSingleton<IStripePriceBroker, StripePriceBroker>()
             .AddSingleton<IStripeCheckoutSessionBroker, StripeCheckoutSessionBroker>()
             .AddSingleton<IStripeBillingPortalSessionBroker, StripeBillingPortalSessionBroker>()
-            .AddSingleton<IStripeCustomerBroker, StripeCustomerBroker>();
+            .AddSingleton<IStripeCustomerBroker, StripeCustomerBroker>()
+            .AddSingleton<IStripeSubscriptionBroker, StripeSubscriptionBroker>();
 
         return builder;
     }
