@@ -51,28 +51,13 @@ public class PaymentsController(IMediator mediator,
                 Request.Headers["Stripe-Signature"], 
                 _stripeSettings.WebHookSecret);
 
-            switch (stripeEvent.Type)
+            if (stripeEvent.Type == Events.InvoicePaymentSucceeded)
             {
-                case Events.CheckoutSessionCompleted:
-                {
-                    var session = stripeEvent.Data.Object as Stripe.Checkout.Session;
-                    var subscription = mapper.Map<StripeSubscriptionDto>(session);
-                    
-                    await eventBusBroker
-                        .PublishLocalAsync(new StripeCheckoutSessionCompletedEvent { Subscription = subscription });
-                    
-                    break;
-                }
-                case Events.InvoicePaymentSucceeded:
-                {
-                    var invoice = stripeEvent.Data.Object as Invoice;
-                    var subscription = mapper.Map<StripeSubscriptionDto>(invoice);
-                    
-                    await eventBusBroker
-                        .PublishLocalAsync(new StripeInvoicePaymentSucceededEvent { Subscription = subscription });
-                    
-                    break;
-                }
+                var invoice = stripeEvent.Data.Object as Invoice;
+                var subscription = mapper.Map<StripeInvoiceDto>(invoice);
+                
+                await eventBusBroker
+                    .PublishLocalAsync(new StripeInvoicePaymentSucceededEvent { Invoice = subscription });
             }
 
             return Accepted();
