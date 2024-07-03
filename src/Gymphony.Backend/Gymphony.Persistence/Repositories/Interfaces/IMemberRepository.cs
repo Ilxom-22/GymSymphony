@@ -9,6 +9,10 @@ public interface IMemberRepository
     IQueryable<Member> Get(
         Expression<Func<Member, bool>>? predicate = default,
         QueryOptions queryOptions = default);
+
+    ValueTask<Member?> GetByStripeCustomerIdAsync(string stripeCustomerId, 
+        QueryOptions queryOptions = default,
+        CancellationToken cancellationToken = default);
     
     ValueTask<Member> CreateAsync(
         Member member, 
