@@ -221,14 +221,26 @@ public static partial class HostConfigurations
         return builder;
     }
 
-    private static WebApplicationBuilder AddMembershipPlansInfrastructure(this WebApplicationBuilder builder)
+    private static WebApplicationBuilder AddProductsInfrastructure(this WebApplicationBuilder builder)
     {
-        builder.Services.AddScoped<IMembershipPlanRepository, MembershipPlanRepository>();
+        builder.Services
+            .AddScoped<IProductRepository, ProductRepository>()
+            .AddScoped<IMembershipPlanRepository, MembershipPlanRepository>();
 
         builder.Services
             .AddTransient<IMembershipPlanMapperService, MembershipPlanMapperService>();
 
         builder.Services.AddHostedService<MembershipPlanStatusUpdaterBackgroundService>();
+        
+        return builder;
+    }
+
+    private static WebApplicationBuilder AddSubscriptionsInfrastructure(this WebApplicationBuilder builder)
+    {
+        builder.Services
+            .AddScoped<ISubscriptionRepository, SubscriptionRepository>()
+            .AddScoped<IMembershipPlanSubscriptionRepository, MembershipPlanSubscriptionRepository>()
+            .AddScoped<ICourseSubscriptionRepository, CourseSubscriptionRepository>();
         
         return builder;
     }
@@ -271,14 +283,16 @@ public static partial class HostConfigurations
             .AddSingleton<StripePriceService>()
             .AddSingleton<StripeCheckoutSessionService>()
             .AddSingleton<StripeBillingPortalSessionService>()
-            .AddSingleton<StripeCustomerService>();
+            .AddSingleton<StripeCustomerService>()
+            .AddSingleton<StripeSubscriptionService>();
 
         builder.Services
             .AddSingleton<IStripeProductBroker, StripeProductBroker>()
             .AddSingleton<IStripePriceBroker, StripePriceBroker>()
             .AddSingleton<IStripeCheckoutSessionBroker, StripeCheckoutSessionBroker>()
             .AddSingleton<IStripeBillingPortalSessionBroker, StripeBillingPortalSessionBroker>()
-            .AddSingleton<IStripeCustomerBroker, StripeCustomerBroker>();
+            .AddSingleton<IStripeCustomerBroker, StripeCustomerBroker>()
+            .AddSingleton<IStripeSubscriptionBroker, StripeSubscriptionBroker>();
 
         return builder;
     }

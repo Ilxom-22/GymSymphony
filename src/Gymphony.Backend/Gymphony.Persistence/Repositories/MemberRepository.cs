@@ -3,6 +3,7 @@ using Gymphony.Domain.Common.Queries;
 using Gymphony.Domain.Entities;
 using Gymphony.Persistence.DataContexts;
 using Gymphony.Persistence.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gymphony.Persistence.Repositories;
 
@@ -15,6 +16,13 @@ public class MemberRepository(AppDbContext dbContext) :
         QueryOptions queryOptions = default)
     {
         return base.Get(predicate, queryOptions);
+    }
+
+    public async ValueTask<Member?> GetByStripeCustomerIdAsync(string stripeCustomerId, 
+        QueryOptions queryOptions = default,
+        CancellationToken cancellationToken = default)
+    {
+        return await base.Get(member => member.StripeCustomerId == stripeCustomerId, queryOptions).FirstOrDefaultAsync(cancellationToken);
     }
 
     public new ValueTask<Member> CreateAsync(
