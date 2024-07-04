@@ -1,4 +1,5 @@
 using AutoMapper;
+using Gymphony.Application.Common.Payments.Commands;
 using Gymphony.Application.Common.Payments.Models.Dtos;
 using Gymphony.Application.Subscriptions.Commands;
 
@@ -20,5 +21,7 @@ public class SubscriptionsMapper : Profile
         
         CreateMap<CreateOrRenewSubscriptionCommand, CreateCourseSubscriptionCommand>()
             .ForMember(dest => dest.CourseId, opt => opt.MapFrom(src => src.ProductId));
+
+        CreateMap<SubscribeForMembershipPlanCommand, CreateCheckoutSessionCommand>();
     }
 }
