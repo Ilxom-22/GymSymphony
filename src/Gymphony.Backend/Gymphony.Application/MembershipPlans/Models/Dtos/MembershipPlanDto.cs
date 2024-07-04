@@ -10,7 +10,7 @@ public class MembershipPlanDto
 
     public string DurationUnit { get; set; } = default!;
 
-    public byte DurationCount { get; set; }
+    public int DurationCount { get; set; }
 
     public string Status { get; set; } = default!;
 

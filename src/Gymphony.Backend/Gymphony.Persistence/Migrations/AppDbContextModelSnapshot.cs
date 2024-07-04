@@ -268,6 +268,9 @@ namespace Gymphony.Persistence.Migrations
                     b.Property<DateTimeOffset>("CreatedTime")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateOnly?>("DeactivationDate")
+                        .HasColumnType("date");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasMaxLength(2048)

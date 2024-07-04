@@ -32,7 +32,7 @@ public class StripePriceBroker(IMapper mapper, StripePriceService stripePriceSer
         CancellationToken cancellationToken = default)
     {
         var priceUpdateOptions = new PriceUpdateOptions { Active = false };
-
+        
         var price = await stripePriceService
             .UpdateAsync(priceId, priceUpdateOptions, cancellationToken: cancellationToken);
 

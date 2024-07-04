@@ -3,7 +3,7 @@ using Gymphony.Domain.Entities;
 
 namespace Gymphony.Application.MembershipPlans.Events;
 
-public class MembershipPlanPriceUpdatedEvent : EventBase
+public class ProductPriceUpdatedEvent : EventBase
 {
-    public MembershipPlan MembershipPlan { get; set; } = default!;
+    public Product Product { get; set; } = default!;
 }

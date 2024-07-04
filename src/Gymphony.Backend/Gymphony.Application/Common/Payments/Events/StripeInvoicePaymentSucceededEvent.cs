@@ -5,5 +5,5 @@ namespace Gymphony.Application.Common.Payments.Events;
 
 public class StripeInvoicePaymentSucceededEvent : EventBase
 {
-    public StripeSubscriptionDto Subscription { get; set; } = default!;
+    public StripeInvoiceDto Invoice { get; set; } = default!;
 }

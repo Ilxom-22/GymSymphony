@@ -21,6 +21,8 @@ public abstract class Product : AuditableEntity, ICreationAuditableEntity, IModi
 
     public DateOnly? ActivationDate { get; set; }
 
+    public DateOnly? DeactivationDate { get; set; }
+
     public StripeDetails? StripeDetails { get; set; }
     
     public Guid? CreatedByUserId { get; set; }
