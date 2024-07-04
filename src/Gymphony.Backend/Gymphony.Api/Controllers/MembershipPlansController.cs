@@ -84,4 +84,15 @@ public class MembershipPlansController(IMediator mediator) : ControllerBase
 
         return NoContent();
     }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPut("deactivate/{membershipPlanId:guid}")]
+    public async ValueTask<IActionResult> DeactivateMembershipPlan([FromRoute] Guid membershipPlanId,
+        CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new DeactivateMembershipPlanCommand { MembershipPlanId = membershipPlanId },
+            cancellationToken);
+
+        return Ok(result);
+    }
 }
