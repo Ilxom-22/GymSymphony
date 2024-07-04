@@ -1,27 +1,17 @@
-using System.Security.Authentication;
-using AutoMapper;
-using FluentValidation;
 using Gymphony.Application.Common.Payments.Brokers;
 using Gymphony.Application.Common.Payments.Commands;
 using Gymphony.Application.Common.Payments.Models.Dtos;
 using Gymphony.Application.Common.Payments.Models.Settings;
-using Gymphony.Application.Common.Payments.Queries;
-using Gymphony.Domain.Brokers;
 using Gymphony.Domain.Common.Commands;
-using Gymphony.Persistence.Repositories.Interfaces;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Stripe;
 using Stripe.Checkout;
 
 namespace Gymphony.Infrastructure.Common.Payments.CommandHandlers;
 
-public class CreateCheckoutSessionCommandHandler(IMediator mediator, IMapper mapper, 
+public class CreateCheckoutSessionCommandHandler(IMediator mediator,
     IStripeCheckoutSessionBroker stripeCheckoutSessionBroker,
-    IValidator<CreateCheckoutSessionCommand> createCheckoutSessionCommandValidator,
-    IMemberRepository memberRepository,
-    IRequestContextProvider requestContextProvider,
     IOptions<StripeSettings> stripeSettings)
     : ICommandHandler<CreateCheckoutSessionCommand, CheckoutSessionDto>
 {
@@ -29,26 +19,8 @@ public class CreateCheckoutSessionCommandHandler(IMediator mediator, IMapper map
     
     public async Task<CheckoutSessionDto> Handle(CreateCheckoutSessionCommand request, CancellationToken cancellationToken)
     {
-        var validationResult = await createCheckoutSessionCommandValidator.ValidateAsync(request, cancellationToken);
-
-        if (!validationResult.IsValid)
-            throw new ValidationException(validationResult.Errors[0].ToString());
-        
-        var memberId = requestContextProvider.GetUserIdFromClaims()
-                       ?? throw new AuthenticationException("Unauthorized access!");
-
-        var member = await memberRepository
-            .Get(member => member.Id == memberId)
-            .FirstOrDefaultAsync(cancellationToken)
-            ?? throw new AuthenticationException("Unauthorized access!");
-
-        var customerId = member.StripeCustomerId ?? await mediator
-            .Send(new CreateStripeCustomerIdCommand { Member = member }, cancellationToken);
-        
-        var getStripePriceIdQuery = mapper.Map<GetStripePriceIdQuery>(request);
-        
-        var priceId = await mediator.Send(getStripePriceIdQuery, cancellationToken)
-            ?? throw new ArgumentException("Invalid Product Id!");
+        var customerId = request.Member.StripeCustomerId ?? await mediator
+            .Send(new CreateStripeCustomerIdCommand { Member = request.Member }, cancellationToken);
         
         var options = new SessionCreateOptions
         {
@@ -61,7 +33,7 @@ public class CreateCheckoutSessionCommandHandler(IMediator mediator, IMapper map
             [
                 new SessionLineItemOptions
                 {
-                    Price = priceId,
+                    Price = request.PriceId,
                     Quantity = 1
                 }
             ]
