@@ -74,15 +74,6 @@ public class MembershipPlansController(IMediator mediator) : ControllerBase
     }
     
     [Authorize(Roles = "Admin")]
-    [HttpPut("update-price")]
-    public async ValueTask<IActionResult> UpdateMembershipPlanPrice([FromBody] UpdateMembershipPlanPriceCommand updateMembershipPlanPriceCommand, CancellationToken cancellationToken)
-    {
-        var result = await mediator.Send(updateMembershipPlanPriceCommand, cancellationToken);
-        
-        return Ok(result);
-    }
-    
-    [Authorize(Roles = "Admin")]
     [HttpDelete("{membershipPlanId:guid}")]
     public async ValueTask<IActionResult> DeleteDraftMembershipPlan([FromRoute] Guid membershipPlanId, CancellationToken cancellationToken)
     {
