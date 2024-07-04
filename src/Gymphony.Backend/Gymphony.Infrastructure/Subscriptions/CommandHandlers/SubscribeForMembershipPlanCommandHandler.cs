@@ -7,6 +7,7 @@ using Gymphony.Application.Subscriptions.Commands;
 using Gymphony.Domain.Brokers;
 using Gymphony.Domain.Common.Commands;
 using Gymphony.Domain.Common.Queries;
+using Gymphony.Domain.Enums;
 using Gymphony.Persistence.Repositories.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -50,7 +51,7 @@ public class SubscribeForMembershipPlanCommandHandler(
                                  .FirstOrDefaultAsync(cancellationToken)
                              ?? throw new ArgumentException($"Membership Plan with id {request.MembershipPlanId} does not exist!");
 
-        if (membershipPlan.StripeDetails is null)
+        if (membershipPlan.StripeDetails is null || membershipPlan.Status != ContentStatus.Activated)
             throw new ArgumentException($"Product with id {request.MembershipPlanId} is not available for purchasing!");
 
         var checkoutSessionCommand = mapper.Map<CreateCheckoutSessionCommand>(request);
