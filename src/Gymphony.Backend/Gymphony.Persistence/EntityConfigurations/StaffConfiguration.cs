@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Gymphony.Persistence.EntityConfigurations;
 
-public class MembershipPlanConfiguration : IEntityTypeConfiguration<MembershipPlan>
+public class StaffConfiguration : IEntityTypeConfiguration<Staff>
 {
-    public void Configure(EntityTypeBuilder<MembershipPlan> builder)
+    public void Configure(EntityTypeBuilder<Staff> builder)
     {
         
     }

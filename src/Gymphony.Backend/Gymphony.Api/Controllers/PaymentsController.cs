@@ -1,6 +1,8 @@
+using AutoMapper;
 using Gymphony.Application.Common.EventBus.Brokers;
 using Gymphony.Application.Common.Payments.Commands;
 using Gymphony.Application.Common.Payments.Events;
+using Gymphony.Application.Common.Payments.Models.Dtos;
 using Gymphony.Application.Common.Payments.Models.Settings;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -12,7 +14,8 @@ namespace Gymphony.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PaymentsController(IMediator mediator, 
+public class PaymentsController(IMediator mediator,
+    IMapper mapper,
     IEventBusBroker eventBusBroker,
     IOptions<StripeSettings> stripeSettings) : ControllerBase
 {
@@ -53,15 +56,21 @@ public class PaymentsController(IMediator mediator,
                 case Events.CheckoutSessionCompleted:
                 {
                     var session = stripeEvent.Data.Object as Stripe.Checkout.Session;
+                    var subscription = mapper.Map<StripeSubscriptionDto>(session);
+                    
                     await eventBusBroker
-                        .PublishLocalAsync(new StripeCheckoutSessionCompletedEvent { Session = session! });
+                        .PublishLocalAsync(new StripeCheckoutSessionCompletedEvent { Subscription = subscription });
+                    
                     break;
                 }
                 case Events.InvoicePaymentSucceeded:
                 {
                     var invoice = stripeEvent.Data.Object as Invoice;
+                    var subscription = mapper.Map<StripeSubscriptionDto>(invoice);
+                    
                     await eventBusBroker
-                        .PublishLocalAsync(new StripeInvoicePaymentSucceededEvent { Invoice = invoice! });
+                        .PublishLocalAsync(new StripeInvoicePaymentSucceededEvent { Subscription = subscription });
+                    
                     break;
                 }
             }
@@ -70,7 +79,7 @@ public class PaymentsController(IMediator mediator,
         }
         catch (StripeException ex)
         {
-            return BadRequest();
+            return BadRequest(ex.StripeError.Message);
         }
     }
 }

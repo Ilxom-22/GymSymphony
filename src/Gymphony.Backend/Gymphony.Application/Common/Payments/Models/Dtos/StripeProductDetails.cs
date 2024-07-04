@@ -13,4 +13,6 @@ public class StripeProductDetails
     public DurationUnit DurationUnit { get; set; }
 
     public byte DurationCount { get; set; }
+
+    public ProductType Type { get; set; }
 }
