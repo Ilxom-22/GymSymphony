@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Gymphony.Domain.Common.Queries;
 using Gymphony.Domain.Entities;
 using Gymphony.Persistence.DataContexts;
@@ -10,6 +11,13 @@ public class MembershipPlanSubscriptionRepository(AppDbContext appDbContext)
     : EntityRepositoryBase<AppDbContext, MembershipPlanSubscription>(appDbContext), 
         IMembershipPlanSubscriptionRepository
 {
+    public new IQueryable<MembershipPlanSubscription> Get(
+        Expression<Func<MembershipPlanSubscription, bool>>? predicate = default, 
+        QueryOptions queryOptions = default)
+    {
+        return base.Get(predicate, queryOptions);
+    }
+
     public async ValueTask<MembershipPlanSubscription?> GetLatestSubscriptionByMemberId(Guid memberId, QueryOptions queryOptions = default,
         CancellationToken cancellationToken = default)
     {

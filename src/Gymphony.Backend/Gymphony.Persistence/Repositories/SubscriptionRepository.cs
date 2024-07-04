@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Gymphony.Domain.Common.Queries;
 using Gymphony.Domain.Entities;
 using Gymphony.Persistence.DataContexts;
@@ -10,6 +11,11 @@ public class SubscriptionRepository(AppDbContext appDbContext)
     : EntityRepositoryBase<AppDbContext, Subscription>(appDbContext),
         ISubscriptionRepository
 {
+    public new IQueryable<Subscription> Get(Expression<Func<Subscription, bool>>? predicate = default, QueryOptions queryOptions = default)
+    {
+        return base.Get(predicate, queryOptions);
+    }
+
     public async ValueTask<Subscription?> GetByStripeSubscriptionId(string stripeSubscriptionId, QueryOptions queryOptions = default,
         CancellationToken cancellationToken = default)
     {
