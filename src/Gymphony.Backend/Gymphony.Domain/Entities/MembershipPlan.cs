@@ -2,5 +2,5 @@ namespace Gymphony.Domain.Entities;
 
 public class MembershipPlan : Product
 {
-    public virtual ICollection<MembershipPlanSubscription>? Subscriptions { get; set; }
+    public virtual IList<MembershipPlanSubscription>? Subscriptions { get; set; }
 }
