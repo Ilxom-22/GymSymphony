@@ -4,6 +4,7 @@ using Gymphony.Application.Common.Payments.Commands;
 using Gymphony.Application.Common.Payments.Events;
 using Gymphony.Application.Common.Payments.Models.Dtos;
 using Gymphony.Application.Common.Payments.Models.Settings;
+using Gymphony.Application.Subscriptions.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,15 +21,6 @@ public class PaymentsController(IMediator mediator,
     IOptions<StripeSettings> stripeSettings) : ControllerBase
 {
     private readonly StripeSettings _stripeSettings = stripeSettings.Value;
-    
-    [Authorize(Roles = "Member")]
-    [HttpPost("create-checkout-session")]
-    public async ValueTask<IActionResult> CreateCheckoutSession([FromBody] CreateCheckoutSessionCommand createCheckoutSessionCommand, CancellationToken cancellationToken)
-    {
-        var sessionId = await mediator.Send(createCheckoutSessionCommand, cancellationToken);
-
-        return Ok(sessionId);
-    }
     
     [Authorize(Roles = "Member")]
     [HttpPost("customer-portal")]
