@@ -24,7 +24,7 @@ public class StripeProductBroker(IMapper mapper, StripeProductService stripeProd
 
         productCreateOptions.Metadata = new Dictionary<string, string>
         {
-            { "type", product.Type.ToString() }
+            { "type", product.ProductType.ToString() }
         };
 
         var stripeProduct = await stripeProductService

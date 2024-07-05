@@ -16,10 +16,11 @@ public static partial class HostConfigurations
             .AddIdentityInfrastructure()
             .AddUsersInfrastructure()
             .AddNotificationsInfrastructure()
-            .AddMembershipPlansInfrastructure()
+            .AddProductsInfrastructure()
             .AddValidators()
             .AddMappers()
-            .AddPaymentInfrastructure();
+            .AddPaymentInfrastructure()
+            .AddSubscriptionsInfrastructure();
         
         return builder;
     }

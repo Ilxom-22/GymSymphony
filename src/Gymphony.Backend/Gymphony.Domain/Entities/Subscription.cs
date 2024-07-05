@@ -13,7 +13,7 @@ public abstract class Subscription : Entity
 
     public Member? Member { get; set; }
 
-    public ICollection<SubscriptionPeriod>? SubscriptionPeriods { get; set; }
+    public virtual ICollection<SubscriptionPeriod>? SubscriptionPeriods { get; set; }
 
     public Guid? LastSubscriptionPeriodId { get; set; }
 

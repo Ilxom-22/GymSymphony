@@ -6,13 +6,13 @@ public class StripeProductDto
 {
     public string Id { get; set; } = default!;
 
-    public string Name { get; set; } = default!;
+    public string Name { get; init; } = default!;
 
-    public string Description { get; set; } = default!;
+    public string Description { get; init; } = default!;
 
-    public string? DefaultPrice { get; set; }
+    public string? DefaultPrice { get; init; }
 
-    public bool Active { get; set; } = true;
+    public bool Active { get; init; } = true;
     
-    public ProductType Type { get; set; }
+    public ProductType ProductType { get; init; }
 }
