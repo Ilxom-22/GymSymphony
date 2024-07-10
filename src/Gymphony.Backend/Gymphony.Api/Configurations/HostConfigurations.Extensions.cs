@@ -166,7 +166,8 @@ public static partial class HostConfigurations
         builder.Services
             .AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IAdminRepository, AdminRepository>()
-            .AddScoped<IMemberRepository, MemberRepository>();
+            .AddScoped<IMemberRepository, MemberRepository>()
+            .AddScoped<IStaffRepository, StaffRepository>();
         
         return builder;
     }
