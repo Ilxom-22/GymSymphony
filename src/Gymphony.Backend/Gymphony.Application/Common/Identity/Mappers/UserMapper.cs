@@ -1,4 +1,5 @@
 using AutoMapper;
+using Gymphony.Application.Common.Identity.Commands;
 using Gymphony.Application.Common.Identity.Models.Dtos;
 using Gymphony.Domain.Entities;
 
@@ -10,6 +11,7 @@ public class UserMapper : Profile
     {
         CreateMap<SignUpDetails, Admin>();
         CreateMap<SignUpDetails, Member>();
+        CreateMap<StaffSignUpCommand, Staff>();
         
         CreateMap<Member, UserDto>()
             .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.ToString()))
@@ -20,6 +22,10 @@ public class UserMapper : Profile
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
         
         CreateMap<User, UserDto>()
+            .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.ToString()))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+
+        CreateMap<Staff, StaffDto>()
             .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.ToString()))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
     }
