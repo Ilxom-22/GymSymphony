@@ -18,7 +18,7 @@ public class DraftMembershipPlanDtoValidator : AbstractValidator<DraftMembership
 
         RuleFor(plan => plan.DurationUnit)
             .NotNull()
-            .Must(BeEnum)
+            .Must(BeDurationUnitEnum)
             .WithMessage("DurationUnit must me an enum!");
 
         RuleFor(plan => plan.DurationCount)
@@ -30,6 +30,6 @@ public class DraftMembershipPlanDtoValidator : AbstractValidator<DraftMembership
             .GreaterThan(decimal.One);
     }
 
-    private bool BeEnum(string durationUnit) =>
+    private bool BeDurationUnitEnum(string durationUnit) =>
          Enum.TryParse(durationUnit, false, out DurationUnit duration);
 }
