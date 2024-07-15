@@ -16,7 +16,7 @@ public class CourseSchedule : AuditableSoftDeletedEntity, ICreationAuditableEnti
 
     public virtual ICollection<Staff>? Instructors { get; set; }
 
-    public virtual ICollection<CourseScheduleEnrollment>? Enrollments { get; set; }
+    public virtual List<CourseScheduleEnrollment>? Enrollments { get; set; }
     
     public Guid? CreatedByUserId { get; set; }
     
