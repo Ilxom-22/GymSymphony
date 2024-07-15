@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gymphony.Api.Controllers;
 
+[Authorize(Roles = "Admin")]
 [ApiController]
 [Route("api/[controller]")]
 public class StaffController(IMediator mediator) : ControllerBase
 {
-    [Authorize(Roles = "Admin")]
     [HttpPost("sign-up")]
     public async ValueTask<IActionResult> AddStaffAsync([FromBody] StaffSignUpCommand staffSignUpCommand, CancellationToken cancellationToken)
     {
@@ -18,7 +18,6 @@ public class StaffController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpDelete("{staffId:guid}")]
     public async ValueTask<IActionResult> RemoveStaffAsync([FromRoute] Guid staffId, 
         CancellationToken cancellationToken)

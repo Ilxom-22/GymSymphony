@@ -7,10 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gymphony.Api.Controllers;
 
+[Authorize(Roles = "Admin")]
 [ApiController]
 [Route("api/[controller]")]
 public class MembershipPlansController(IMediator mediator) : ControllerBase
 {
+    [AllowAnonymous]
     [HttpGet("public")]
     public async ValueTask<IActionResult> GetPublicMembershipPlans(CancellationToken cancellationToken)
     {
@@ -20,7 +22,6 @@ public class MembershipPlansController(IMediator mediator) : ControllerBase
         return Ok(queryResult);
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpGet("all")]
     public async ValueTask<IActionResult> GetAllMembershipPlans(CancellationToken cancellationToken)
     {
@@ -30,7 +31,6 @@ public class MembershipPlansController(IMediator mediator) : ControllerBase
         return Ok(queryResult);
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpGet("plan-details/{membershipPlanId:guid}")]
     public async ValueTask<IActionResult> GetMembershipPlanDetails(
         [FromRoute] Guid membershipPlanId,
@@ -42,7 +42,6 @@ public class MembershipPlansController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpPost]
     public async ValueTask<IActionResult> CreateMembershipPlan([FromBody] DraftMembershipPlanDto draftMembershipPlanDto, CancellationToken cancellationToken)
     {
@@ -55,7 +54,6 @@ public class MembershipPlansController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpPut("update")]
     public async ValueTask<IActionResult> UpdateDraftMembershipPlan([FromBody] UpdateDraftMembershipPlanCommand updateDraftMembershipPlanCommand, CancellationToken cancellationToken)
     {
@@ -64,7 +62,6 @@ public class MembershipPlansController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
     
-    [Authorize(Roles = "Admin")]
     [HttpPut("publish")]
     public async ValueTask<IActionResult> PublishMembershipPlan([FromBody] PublishMembershipPlanCommand publishMembershipPlanCommand, CancellationToken cancellationToken)
     {
@@ -73,7 +70,6 @@ public class MembershipPlansController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
     
-    [Authorize(Roles = "Admin")]
     [HttpDelete("{membershipPlanId:guid}")]
     public async ValueTask<IActionResult> DeleteDraftMembershipPlan([FromRoute] Guid membershipPlanId, CancellationToken cancellationToken)
     {
@@ -85,7 +81,6 @@ public class MembershipPlansController(IMediator mediator) : ControllerBase
         return NoContent();
     }
 
-    [Authorize(Roles = "Admin")]
     [HttpPut("deactivate/{membershipPlanId:guid}")]
     public async ValueTask<IActionResult> DeactivateMembershipPlan([FromRoute] Guid membershipPlanId,
         CancellationToken cancellationToken)
