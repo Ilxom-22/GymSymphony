@@ -1,8 +1,8 @@
 using AutoMapper;
 using Gymphony.Application.Common.EventBus.Brokers;
 using Gymphony.Application.Common.Payments.Commands;
-using Gymphony.Application.MembershipPlans.Commands;
 using Gymphony.Application.MembershipPlans.Events;
+using Gymphony.Application.Products.Commands;
 using Gymphony.Application.Products.Models.Dtos;
 using Gymphony.Domain.Common.Commands;
 using Gymphony.Domain.Enums;
@@ -10,12 +10,12 @@ using Gymphony.Persistence.Repositories.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Gymphony.Infrastructure.MembershipPlans.CommandHandlers;
+namespace Gymphony.Infrastructure.Products.CommandHandlers;
 
 public class UpdateProductPriceCommandHandler(
     IMapper mapper, IMediator mediator,
     IProductRepository productRepository,
-    IEventBusBroker eventBusBroker) 
+    IEventBusBroker eventBusBroker)
     : ICommandHandler<UpdateProductPriceCommand, ProductDto>
 {
     public async Task<ProductDto> Handle(UpdateProductPriceCommand request, CancellationToken cancellationToken)
@@ -38,18 +38,18 @@ public class UpdateProductPriceCommandHandler(
 
         var newPriceId =
             await mediator.Send(
-                new UpdateStripePriceCommand 
-                    { StripeDetails = foundProduct.StripeDetails, NewPrice = request.Price },
+                new UpdateStripePriceCommand
+                { StripeDetails = foundProduct.StripeDetails, NewPrice = request.Price },
                 cancellationToken);
 
         foundProduct.Price = request.Price;
         foundProduct.StripeDetails.PriceId = newPriceId;
-        
+
         await productRepository.UpdateAsync(foundProduct, cancellationToken: cancellationToken);
 
         if (foundProduct.Status is ContentStatus.Activated)
             await eventBusBroker.PublishLocalAsync(new ProductPriceUpdatedEvent
-                { Product = foundProduct }, cancellationToken);
+            { Product = foundProduct }, cancellationToken);
 
         return mapper.Map<ProductDto>(foundProduct);
     }
