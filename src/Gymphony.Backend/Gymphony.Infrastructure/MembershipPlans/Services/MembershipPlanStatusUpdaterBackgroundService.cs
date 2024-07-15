@@ -21,6 +21,7 @@ public class MembershipPlanStatusUpdaterBackgroundService(
         while (!stoppingToken.IsCancellationRequested)
         {
             await UpdatePendingMembershipPlanActivations(stoppingToken);
+            await DeactivateMembershipPlans(stoppingToken);
             await Task.Delay(TimeSpan.FromDays(1), stoppingToken);
         }
     }
@@ -33,7 +34,7 @@ public class MembershipPlanStatusUpdaterBackgroundService(
 
         var activationPendingPlans = await membershipPlanRepository.Get(plan =>
                 plan.Status == ContentStatus.Published &&
-                plan.ActivationDate == DateOnly.FromDateTime(DateTimeOffset.UtcNow.Date))
+                plan.ActivationDate == DateOnly.FromDateTime(DateTime.UtcNow))
             .ToListAsync(cancellationToken);
 
         foreach (var plan in activationPendingPlans)
@@ -41,6 +42,23 @@ public class MembershipPlanStatusUpdaterBackgroundService(
             plan.Status = ContentStatus.Activated;
             await membershipPlanRepository
                 .UpdateAsync(plan, cancellationToken: cancellationToken);
+        }
+    }
+
+    private async ValueTask DeactivateMembershipPlans(CancellationToken cancellationToken)
+    {
+        await using var scope = serviceProvider.CreateAsyncScope();
+        var membershipPlanRepository = scope.ServiceProvider.GetRequiredService<IMembershipPlanRepository>();
+
+        var deactivationPendingPlans = await membershipPlanRepository.Get(plan =>
+                plan.Status == ContentStatus.DeactivationRequested &&
+                plan.DeactivationDate >= DateOnly.FromDateTime(DateTime.UtcNow))
+            .ToListAsync(cancellationToken);
+
+        foreach (var plan in deactivationPendingPlans)
+        {
+            plan.Status = ContentStatus.Deactivated;
+            await membershipPlanRepository.UpdateAsync(plan, cancellationToken: cancellationToken);
         }
     }
 }
