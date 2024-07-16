@@ -1,5 +1,4 @@
 using Gymphony.Application.Common.Identity.Models.Dtos;
-using Gymphony.Domain.Entities;
 
 namespace Gymphony.Application.MembershipPlans.Models.Dtos;
 
@@ -17,7 +16,9 @@ public class MembershipPlanDetailsDto
 
     public string Status { get; set; } = default!;
 
-    public StripeDetails? StripeDetails { get; set; }
+    public DateOnly? ActivationDate { get; set; }
+
+    public DateOnly? DeactivationDate { get; set; }
 
     public decimal Price { get; set; }
     

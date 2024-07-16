@@ -11,7 +11,8 @@ using Gymphony.Application.Common.Notifications.Models.Settings;
 using Gymphony.Application.Common.Payments.Brokers;
 using Gymphony.Application.Common.Payments.Models.Settings;
 using Gymphony.Application.Common.Settings;
-using Gymphony.Application.MembershipPlans.Services;
+using Gymphony.Application.Courses.Services;
+using Gymphony.Application.Products.Services;
 using Gymphony.Domain.Brokers;
 using Gymphony.Infrastructure.Common.EventBus.Brokers;
 using Gymphony.Infrastructure.Common.Identity.Brokers;
@@ -19,7 +20,8 @@ using Gymphony.Infrastructure.Common.Identity.Services;
 using Gymphony.Infrastructure.Common.Notifications.Brokers;
 using Gymphony.Infrastructure.Common.Payments.Brokers;
 using Gymphony.Infrastructure.Common.Payments.Services;
-using Gymphony.Infrastructure.MembershipPlans.Services;
+using Gymphony.Infrastructure.Courses.Services;
+using Gymphony.Infrastructure.Products.Services;
 using Gymphony.Persistence.DataContexts;
 using Gymphony.Persistence.Extensions;
 using Gymphony.Persistence.Interceptors;
@@ -166,7 +168,8 @@ public static partial class HostConfigurations
         builder.Services
             .AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IAdminRepository, AdminRepository>()
-            .AddScoped<IMemberRepository, MemberRepository>();
+            .AddScoped<IMemberRepository, MemberRepository>()
+            .AddScoped<IStaffRepository, StaffRepository>();
         
         return builder;
     }
@@ -225,12 +228,15 @@ public static partial class HostConfigurations
     {
         builder.Services
             .AddScoped<IProductRepository, ProductRepository>()
-            .AddScoped<IMembershipPlanRepository, MembershipPlanRepository>();
+            .AddScoped<IMembershipPlanRepository, MembershipPlanRepository>()
+            .AddScoped<ICourseRepository, CourseRepository>()
+            .AddScoped<ICourseScheduleRepository, CourseScheduleRepository>();
 
         builder.Services
-            .AddTransient<IMembershipPlanMapperService, MembershipPlanMapperService>();
+            .AddTransient<IProductsMapperService, ProductsMapperService>()
+            .AddTransient<ITimeService, TimeService>();
 
-        builder.Services.AddHostedService<MembershipPlanStatusUpdaterBackgroundService>();
+        builder.Services.AddHostedService<ProductStatusUpdaterBackgroundService>();
         
         return builder;
     }

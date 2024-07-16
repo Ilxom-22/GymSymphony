@@ -539,6 +539,12 @@ namespace Gymphony.Persistence.Migrations
 
                     b.HasIndex("CreatedByUserId");
 
+                    b.ToTable("Users", t =>
+                        {
+                            t.Property("TemporaryPasswordChanged")
+                                .HasColumnName("Admin_TemporaryPasswordChanged");
+                        });
+
                     b.HasDiscriminator().HasValue(0);
                 });
 
@@ -558,6 +564,14 @@ namespace Gymphony.Persistence.Migrations
             modelBuilder.Entity("Gymphony.Domain.Entities.Staff", b =>
                 {
                     b.HasBaseType("Gymphony.Domain.Entities.User");
+
+                    b.Property<string>("Bio")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("character varying(2048)");
+
+                    b.Property<bool>("TemporaryPasswordChanged")
+                        .HasColumnType("boolean");
 
                     b.HasDiscriminator().HasValue(1);
                 });

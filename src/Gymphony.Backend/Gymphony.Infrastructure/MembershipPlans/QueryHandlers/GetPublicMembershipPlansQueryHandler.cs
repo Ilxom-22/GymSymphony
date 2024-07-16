@@ -1,6 +1,6 @@
 using Gymphony.Application.MembershipPlans.Models.Dtos;
 using Gymphony.Application.MembershipPlans.Queries;
-using Gymphony.Application.MembershipPlans.Services;
+using Gymphony.Application.Products.Services;
 using Gymphony.Domain.Common.Queries;
 using Gymphony.Domain.Enums;
 using Gymphony.Persistence.Repositories.Interfaces;
@@ -8,7 +8,7 @@ using Gymphony.Persistence.Repositories.Interfaces;
 namespace Gymphony.Infrastructure.MembershipPlans.QueryHandlers;
 
 public class GetPublicMembershipPlansQueryHandler(
-    IMembershipPlanMapperService membershipPlanMapperService,
+    IProductsMapperService membershipPlanMapperService,
     IMembershipPlanRepository membershipPlanRepository)
     : IQueryHandler<GetPublicMembershipPlansQuery, PublicMembershipPlansStatusDto>
 {
