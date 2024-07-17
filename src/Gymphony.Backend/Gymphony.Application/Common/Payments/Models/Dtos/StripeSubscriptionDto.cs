@@ -8,8 +8,6 @@ public class StripeSubscriptionDto
 
     public string ProductId { get; set; } = default!;
     
-    public ProductType ProductType { get; set; }
-    
     public DateTime SubscriptionStartDate { get; set; }
 
     public DateTime SubscriptionEndDate { get; set; }

@@ -12,6 +12,7 @@ public class StripeProductMapper : Profile
         CreateMap<StripeProductDto, ProductCreateOptions>();
         CreateMap<StripeProductDto, ProductUpdateOptions>();
 
-        CreateMap<StripeProductDetails, StripeProductDto>();
+        CreateMap<StripeProductDetails, StripeProductDto>()
+            .ForMember(dest => dest.ProductType, opt => opt.MapFrom(src => src.Type));
     }
 }
