@@ -7,9 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 namespace Gymphony.Infrastructure.Subscriptions.CommandHandlers;
 
 public class CreateCourseSubscriptionCommandHandler(IServiceProvider serviceProvider)
-    : ICommandHandler<CreateCourseSubscriptionCommand, bool>
+    : ICommandHandler<CreateCourseSubscriptionCommand, CourseSubscription>
 {
-    public async Task<bool> Handle(CreateCourseSubscriptionCommand request, CancellationToken cancellationToken)
+    public async Task<CourseSubscription> Handle(CreateCourseSubscriptionCommand request, CancellationToken cancellationToken)
     {
         await using var scope = serviceProvider.CreateAsyncScope();
         
@@ -20,12 +20,17 @@ public class CreateCourseSubscriptionCommandHandler(IServiceProvider serviceProv
         {
             MemberId = request.MemberId,
             CourseId = request.CourseId,
-            LastSubscriptionPeriod = request.SubscriptionPeriod,
             StripeSubscriptionId = request.StripeSubscriptionId
         };
 
         await courseSubscriptionRepository.CreateAsync(courseSubscription, cancellationToken: cancellationToken);
 
-        return true;
+        request.SubscriptionPeriod.SubscriptionId = courseSubscription.Id;
+        courseSubscription.LastSubscriptionPeriod = request.SubscriptionPeriod;
+
+        await courseSubscriptionRepository.UpdateAsync(courseSubscription,
+            cancellationToken: cancellationToken);
+
+        return courseSubscription;
     }
 }

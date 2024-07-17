@@ -3,7 +3,7 @@ using Gymphony.Domain.Entities;
 
 namespace Gymphony.Application.Subscriptions.Commands;
 
-public class CreateCourseSubscriptionCommand : ICommand<bool>
+public class CreateCourseSubscriptionCommand : ICommand<CourseSubscription>
 {
     public Guid MemberId { get; set; }
     
