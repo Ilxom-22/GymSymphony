@@ -61,6 +61,14 @@ public class CoursesController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
 
+    [HttpPut("deactivate/{courseId:guid}")]
+    public async ValueTask<IActionResult> DeactivateCourseAsync([FromRoute] Guid courseId, CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new DeactivateCourseCommand {  CourseId = courseId }, cancellationToken);
+
+        return Ok(result);
+    }
+
     [HttpDelete("{courseId:guid}")]
     public async ValueTask<IActionResult> DeleteDraftCourseAsync([FromRoute] Guid courseId, CancellationToken cancellationToken)
     {
