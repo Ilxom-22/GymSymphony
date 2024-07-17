@@ -29,6 +29,11 @@ public class CourseScheduleRepository(AppDbContext dbContext)
             .FirstOrDefaultAsync(cancellationToken);
     }
 
+    public new ValueTask<CourseSchedule> UpdateAsync(CourseSchedule courseSchedule, bool saveChanges = true, CancellationToken cancellationToken = default)
+    {
+        return base.UpdateAsync(courseSchedule, saveChanges, cancellationToken);
+    }
+
     public new ValueTask<CourseSchedule> DeleteAsync(CourseSchedule courseSchedule, bool saveChanges = true, 
         CancellationToken cancellationToken = default)
     {
