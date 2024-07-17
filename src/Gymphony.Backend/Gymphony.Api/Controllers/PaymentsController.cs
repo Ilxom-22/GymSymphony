@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Stripe;
+using Stripe.Checkout;
 
 namespace Gymphony.Api.Controllers;
 
@@ -49,6 +50,24 @@ public class PaymentsController(IMediator mediator,
                 
                 await eventBusBroker
                     .PublishLocalAsync(new StripeInvoicePaymentSucceededEvent { Invoice = subscription });
+            }
+            else if (stripeEvent.Type == Events.CheckoutSessionCompleted)
+            {
+                var checkoutSession = stripeEvent.Data.Object as Session
+                    ?? throw new InvalidOperationException();
+
+                var stripeCheckoutSessionCompletedEvent = mapper.Map<StripeCheckoutSessionCompeletedEvent>(checkoutSession);
+
+                await eventBusBroker.PublishLocalAsync(stripeCheckoutSessionCompletedEvent);
+            }
+            else if (stripeEvent.Type == Events.CheckoutSessionExpired || stripeEvent.Type == Events.CheckoutSessionAsyncPaymentFailed)
+            {
+                var checkoutSession = stripeEvent.Data.Object as Session
+                    ?? throw new InvalidOperationException();
+
+                var sessionId = checkoutSession.Id;
+
+                await eventBusBroker.PublishLocalAsync(new StripeCheckoutSessionFailedEvent { SessionId = sessionId });
             }
 
             return Accepted();

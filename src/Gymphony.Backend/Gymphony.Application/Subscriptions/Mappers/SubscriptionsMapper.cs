@@ -23,5 +23,6 @@ public class SubscriptionsMapper : Profile
             .ForMember(dest => dest.CourseId, opt => opt.MapFrom(src => src.ProductId));
 
         CreateMap<SubscribeForMembershipPlanCommand, CreateCheckoutSessionCommand>();
+        CreateMap<SubscribeForCourseCommand, CreateCheckoutSessionCommand>();
     }
 }

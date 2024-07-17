@@ -10,7 +10,9 @@ public class CourseScheduleEnrollment : SoftDeletedEntity
 
     public Guid CourseSubscriptionId { get; set; }
 
-    public DateTime EnrollmentDate { get; set; }
+    public DateOnly EnrollmentDate { get; set; }
+
+    public DateOnly ExpiryDate { get; set; }
 
     public CourseSubscription? CourseSubscription { get; set; }
 

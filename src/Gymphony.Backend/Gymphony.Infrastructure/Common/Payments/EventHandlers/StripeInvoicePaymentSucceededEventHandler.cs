@@ -42,6 +42,7 @@ public class StripeInvoicePaymentSucceededEventHandler(
 
         command.MemberId = customer.Id;
         command.ProductId = product.Id;
+        command.ProductType = product.Type;
 
         await mediator.Send(command, cancellationToken);
     }

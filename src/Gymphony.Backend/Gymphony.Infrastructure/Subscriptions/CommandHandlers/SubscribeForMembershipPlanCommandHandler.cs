@@ -11,7 +11,6 @@ using Gymphony.Domain.Enums;
 using Gymphony.Persistence.Repositories.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace Gymphony.Infrastructure.Subscriptions.CommandHandlers;
 

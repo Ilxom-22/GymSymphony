@@ -12,4 +12,8 @@ public interface ICourseSubscriptionRepository
     ValueTask<CourseSubscription> CreateAsync(CourseSubscription subscription, 
         bool saveChanges = true,
         CancellationToken cancellationToken = default);
+
+    ValueTask<CourseSubscription> UpdateAsync(CourseSubscription subscription,
+        bool saveChanges = true, 
+        CancellationToken cancellationToken = default);
 }

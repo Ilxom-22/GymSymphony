@@ -21,4 +21,9 @@ public class CourseSubscriptionRepository(AppDbContext appDbContext)
     {
         return base.CreateAsync(subscription, saveChanges, cancellationToken);
     }
+
+    public new ValueTask<CourseSubscription> UpdateAsync(CourseSubscription subscription, bool saveChanges = true, CancellationToken cancellationToken = default)
+    {
+        return base.UpdateAsync(subscription, saveChanges, cancellationToken);
+    }
 }

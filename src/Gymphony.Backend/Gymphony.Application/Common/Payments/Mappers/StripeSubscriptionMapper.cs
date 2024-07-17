@@ -1,7 +1,8 @@
 using AutoMapper;
+using Gymphony.Application.Common.Payments.Events;
 using Gymphony.Application.Common.Payments.Models.Dtos;
-using Gymphony.Domain.Enums;
 using Stripe;
+using Stripe.Checkout;
 
 namespace Gymphony.Application.Common.Payments.Mappers;
 
@@ -14,10 +15,16 @@ public class StripeSubscriptionMapper : Profile
             .ForMember(dest => dest.PaymentDate, opt => opt.MapFrom(src => DateTimeOffset.UtcNow));
 
         CreateMap<Subscription, StripeSubscriptionDto>()
-            .ForMember(dest => dest.ProductType,
-                opt => opt.MapFrom(src => Enum.Parse<ProductType>(src.Items.Data[0].Plan.Product.Metadata["type"])))
             .ForMember(dest => dest.ProductId, opt => opt.MapFrom(src => src.Items.Data[0].Plan.ProductId))
             .ForMember(dest => dest.SubscriptionStartDate, opt => opt.MapFrom(src => src.CurrentPeriodStart))
             .ForMember(dest => dest.SubscriptionEndDate, opt => opt.MapFrom(src => src.CurrentPeriodEnd));
+
+        CreateMap<Session, StripeCheckoutSessionCompeletedEvent>()
+            .ForMember(dest => dest.Id, opt => opt.Ignore())
+            .ForMember(dest => dest.SessionId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.SubscriptionId, opt => opt.MapFrom(src => src.SubscriptionId))
+            .ForMember(dest => dest.CustomerId, opt => opt.MapFrom(src => src.CustomerId))
+            .ForMember(dest => dest.PaymentDate, opt => opt.MapFrom(src => src.AmountTotal))
+            .ForMember(dest => dest.PaymentDate, opt => opt.MapFrom(src => DateTimeOffset.UtcNow));
     }
 }

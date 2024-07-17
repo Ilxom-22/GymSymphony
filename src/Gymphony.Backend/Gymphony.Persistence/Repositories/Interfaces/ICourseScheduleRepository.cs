@@ -12,5 +12,7 @@ public interface ICourseScheduleRepository
 
     ValueTask<CourseSchedule?> GetByIdAsync(Guid scheduleId, QueryOptions queryOptions = default, CancellationToken cancellationToken = default);
 
+    ValueTask<CourseSchedule> UpdateAsync(CourseSchedule courseSchedule, bool saveChanges = true, CancellationToken cancellationToken = default);
+
     ValueTask<CourseSchedule> DeleteAsync(CourseSchedule courseSchedule, bool saveChanges = true, CancellationToken cancellationToken = default);
 }
