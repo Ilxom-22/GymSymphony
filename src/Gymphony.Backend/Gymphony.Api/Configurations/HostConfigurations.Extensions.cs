@@ -246,7 +246,9 @@ public static partial class HostConfigurations
         builder.Services
             .AddScoped<ISubscriptionRepository, SubscriptionRepository>()
             .AddScoped<IMembershipPlanSubscriptionRepository, MembershipPlanSubscriptionRepository>()
-            .AddScoped<ICourseSubscriptionRepository, CourseSubscriptionRepository>();
+            .AddScoped<ICourseSubscriptionRepository, CourseSubscriptionRepository>()
+            .AddScoped<ICourseScheduleEnrollmentRepository, CourseScheduleEnrollmentRepository>()
+            .AddScoped<IPendingScheduleEnrollmentRepository, PendingScheduleEnrollmentRepository>();
         
         return builder;
     }
