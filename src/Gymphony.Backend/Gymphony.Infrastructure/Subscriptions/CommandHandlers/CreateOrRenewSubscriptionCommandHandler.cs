@@ -49,12 +49,7 @@ public class CreateOrRenewSubscriptionCommandHandler(IServiceProvider servicePro
 
             return await mediator.Send(command, cancellationToken);
         }
-        else
-        {
-            var command = mapper.Map<CreateCourseSubscriptionCommand>(request);
-            command.SubscriptionPeriod = subscriptionPeriod;
 
-            return await mediator.Send(command, cancellationToken);
-        }
+        return true;
     }
 }
