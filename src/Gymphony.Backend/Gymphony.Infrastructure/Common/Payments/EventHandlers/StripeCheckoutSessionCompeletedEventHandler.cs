@@ -71,7 +71,8 @@ public class StripeCheckoutSessionCompeletedEventHandler(IServiceProvider servic
                 CourseScheduleId = enrollment.CourseScheduleId,
                 CourseSubscriptionId = subscription.Id,
                 MemberId = subscription.MemberId,
-                EnrollmentDate = DateTime.UtcNow
+                EnrollmentDate = DateOnly.FromDateTime(DateTime.UtcNow),
+                ExpiryDate = subscription.LastSubscriptionPeriod!.ExpiryDate
             };
 
             await courseScheduleEnrollmentRepository.CreateAsync(courseScheduleEnrollment, cancellationToken: cancellationToken);
