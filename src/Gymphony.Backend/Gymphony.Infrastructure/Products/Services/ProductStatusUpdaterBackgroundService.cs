@@ -20,6 +20,7 @@ public class ProductStatusUpdaterBackgroundService(IServiceProvider serviceProvi
         {
             await UpdatePendingProductActivations(stoppingToken);
             await DeactivateProducts(stoppingToken);
+            await RemoveInactiveScheduleEnrollments(stoppingToken);
             await Task.Delay(TimeSpan.FromDays(1), stoppingToken);
         }
     }
@@ -57,5 +58,14 @@ public class ProductStatusUpdaterBackgroundService(IServiceProvider serviceProvi
             product.Status = ContentStatus.Deactivated;
             await productRepository.UpdateAsync(product, cancellationToken: cancellationToken);
         }
+    }
+
+    private async ValueTask RemoveInactiveScheduleEnrollments(CancellationToken cancellationToken)
+    {
+        await using var scope = serviceProvider.CreateAsyncScope();
+        var courseScheduleEnrollmentRepository = scope.ServiceProvider.GetRequiredService<ICourseScheduleEnrollmentRepository>();
+
+        await courseScheduleEnrollmentRepository
+            .BatchDeleteAsync(enrollment => enrollment.ExpiryDate > DateOnly.FromDateTime(DateTime.UtcNow), cancellationToken);
     }
 }

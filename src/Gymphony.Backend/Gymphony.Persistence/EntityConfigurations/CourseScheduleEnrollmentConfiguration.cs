@@ -12,12 +12,14 @@ public class CourseScheduleEnrollmentConfiguration : IEntityTypeConfiguration<Co
 
         builder.Property(cse => cse.EnrollmentDate).IsRequired();
 
-        builder.HasOne<Member>(cse => cse.Member)
+        builder.HasOne(cse => cse.Member)
             .WithMany()
             .HasForeignKey(cse => cse.MemberId);
 
-        builder.HasOne<CourseSubscription>(cse => cse.CourseSubscription)
+        builder.HasOne(cse => cse.CourseSubscription)
             .WithMany()
             .HasForeignKey(cse => cse.CourseSubscriptionId);
+
+        builder.HasQueryFilter(cse => !cse.IsDeleted);
     }
 }
