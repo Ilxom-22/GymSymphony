@@ -24,7 +24,9 @@ public class GetCourseSchedulesQueryHandler(IMapper mapper,
             throw new AuthenticationException("Unauthorized Access!");
 
         var schedules = courseScheduleRepository.Get(schedule => schedule.CourseId == request.CourseId)
-            .Include(schedule => schedule.Instructors)
+            .Include(schedule => schedule.Instructors!)
+            .ThenInclude(i => i.ProfileImage)
+            .ThenInclude(pi => pi.StorageFile)
             .Include(schedule => schedule.Enrollments)
             .Include(schedule => schedule.PendingEnrollments)
             .Select(schedule => new
