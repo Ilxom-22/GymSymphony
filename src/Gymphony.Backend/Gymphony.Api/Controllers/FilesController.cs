@@ -33,4 +33,31 @@ public class FilesController(IMediator mediator, IMapper mapper) : ControllerBas
 
         return NoContent();
     }
+
+    [Authorize(Roles = "Admin")]
+    [HttpPost("profileImages/staff/{staffId:guid}")]
+    public async ValueTask<IActionResult> UploadStaffProfileImageAsync(
+        [FromForm] IFormFile staffProfileImage,
+        [FromRoute] Guid staffId,
+        CancellationToken cancellationToken)
+    {
+        var uploadStaffProfileImageCommand = mapper.Map<UploadStaffProfileImageCommand>(staffProfileImage);
+        uploadStaffProfileImageCommand.StaffId = staffId;
+
+        var result = await mediator.Send(uploadStaffProfileImageCommand, cancellationToken);
+
+        return Ok(result);
+    }
+
+    [Authorize(Roles = "Admin, Member")]
+    [HttpPost("profileImages")]
+    public async ValueTask<IActionResult> UploadProfileImageAsync(
+        [FromForm] IFormFile profileImage,
+        CancellationToken cancellationToken)
+    {
+        var uploadUserProfileImageCommand = mapper.Map<UploadUserProfileImageCommand>(profileImage);
+        var result = await mediator.Send(uploadUserProfileImageCommand, cancellationToken);
+
+        return Ok(result);
+    }
 }
