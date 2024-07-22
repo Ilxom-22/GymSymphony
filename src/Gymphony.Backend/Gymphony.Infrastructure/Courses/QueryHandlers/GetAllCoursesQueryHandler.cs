@@ -12,7 +12,10 @@ public class GetAllCoursesQueryHandler(ICourseRepository courseRepository, IProd
 {
     public Task<CoursesStatusGroupDto> Handle(GetAllCoursesQuery request, CancellationToken cancellationToken)
     {
-        var courses = courseRepository.Get(queryOptions: new QueryOptions(QueryTrackingMode.AsNoTracking));
+        var courses = courseRepository
+            .Get(queryOptions: new QueryOptions(QueryTrackingMode.AsNoTracking))
+            .Include(course => course.CourseImages!)
+            .ThenInclude(ci => ci.StorageFile);
 
         var result = productMapperService.MapToGroupedCourses(courses);
 
