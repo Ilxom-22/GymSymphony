@@ -1,5 +1,7 @@
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
+using Azure.Storage.Blobs;
 using FluentValidation;
 using Gymphony.Api.Data;
 using Gymphony.Api.Filters;
@@ -11,6 +13,8 @@ using Gymphony.Application.Common.Notifications.Models.Settings;
 using Gymphony.Application.Common.Payments.Brokers;
 using Gymphony.Application.Common.Payments.Models.Settings;
 using Gymphony.Application.Common.Settings;
+using Gymphony.Application.Common.StorageFiles.Brokers;
+using Gymphony.Application.Common.StorageFiles.Models.Settings;
 using Gymphony.Application.Courses.Services;
 using Gymphony.Application.Products.Services;
 using Gymphony.Domain.Brokers;
@@ -20,6 +24,7 @@ using Gymphony.Infrastructure.Common.Identity.Services;
 using Gymphony.Infrastructure.Common.Notifications.Brokers;
 using Gymphony.Infrastructure.Common.Payments.Brokers;
 using Gymphony.Infrastructure.Common.Payments.Services;
+using Gymphony.Infrastructure.Common.StorageFiles.Brokers;
 using Gymphony.Infrastructure.Courses.Services;
 using Gymphony.Infrastructure.Products.Services;
 using Gymphony.Persistence.DataContexts;
@@ -250,6 +255,29 @@ public static partial class HostConfigurations
             .AddScoped<ICourseScheduleEnrollmentRepository, CourseScheduleEnrollmentRepository>()
             .AddScoped<IPendingScheduleEnrollmentRepository, PendingScheduleEnrollmentRepository>();
         
+        return builder;
+    }
+
+    private static WebApplicationBuilder AddFilesInfrastructure(this WebApplicationBuilder builder)
+    {
+        if (builder.Environment.IsDevelopment())
+        {
+            builder.Services.AddSingleton(x => new BlobServiceClient(builder.Configuration.GetConnectionString("StorageAccount")));
+        }
+        else
+        {
+            var storageAccountConnectionString = Environment.GetEnvironmentVariable("AzureStorageAccountConnectionString");
+            builder.Services.AddSingleton(x => new BlobServiceClient(storageAccountConnectionString));
+        }
+
+        builder.Services.Configure<StorageFileSettings>(builder.Configuration.GetSection(nameof(StorageFileSettings)));
+
+        builder.Services.AddScoped<IAzureBlobStorageBroker, AzureBlobStorageBroker>();
+
+        builder.Services
+            .AddScoped<IStorageFileRepository, StorageFileRepository>()
+            .AddScoped<ICourseImageRepository, CourseImageRepository>();
+
         return builder;
     }
 
