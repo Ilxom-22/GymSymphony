@@ -48,6 +48,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     #region Files
     public DbSet<StorageFile> StorageFiles => Set<StorageFile>();
     public DbSet<CourseImage> CourseImages => Set<CourseImage>();
+    public DbSet<UserProfileImage> UserProfileImages => Set<UserProfileImage>();
 
     #endregion
 
