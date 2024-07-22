@@ -44,7 +44,13 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<PendingScheduleEnrollment> PendingScheduleEnrollments => Set<PendingScheduleEnrollment>();
 
     #endregion
-    
+
+    #region Files
+    public DbSet<StorageFile> StorageFiles => Set<StorageFile>();
+    public DbSet<CourseImage> CourseImages => Set<CourseImage>();
+
+    #endregion
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
