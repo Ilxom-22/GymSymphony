@@ -15,11 +15,30 @@ public class StorageFileMapper : Profile
             .ForMember(dest => dest.Source, opt => opt.MapFrom(src => src.OpenReadStream()))
             .ForMember(dest => dest.Size, opt => opt.MapFrom(src => src.Length));
 
+        CreateMap<IFormFile, UploadUserProfileImageCommand>()
+            .ForMember(dest => dest.Source, opt => opt.MapFrom(src => src.OpenReadStream()))
+            .ForMember(dest => dest.Size, opt => opt.MapFrom(src => src.Length));
+
+        CreateMap<IFormFile, UploadStaffProfileImageCommand>()
+            .ForMember(dest => dest.Source, opt => opt.MapFrom(src => src.OpenReadStream()))
+            .ForMember(dest => dest.Size, opt => opt.MapFrom(src => src.Length));
+
         CreateMap<UploadCourseImageCommand, UploadFileInfoDto>()
             .ForMember(dest => dest.StorageFileType, opt => opt.MapFrom(src => StorageFileType.CourseImage));
+
+        CreateMap<UploadProfileImageCommand, UploadFileInfoDto>()
+            .ForMember(dest => dest.StorageFileType, opt => opt.MapFrom(src => StorageFileType.UserProfileImage));
 
         CreateMap<CourseImage, CourseImageDto>()
             .ForMember(dest => dest.CourseImageId, opt => opt.MapFrom(src => src.Id))
             .ForMember(dest => dest.CourseImageUrl, opt => opt.MapFrom(src => src.StorageFile!.Url));
+
+        CreateMap<UserProfileImage, UserProfileImageDto>()
+            .ForMember(dest => dest.ProfileImageId, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Url, opt => opt.MapFrom(src => src.StorageFile!.Url));
+
+        CreateMap<UploadUserProfileImageCommand, UploadProfileImageCommand>();
+
+        CreateMap<UploadStaffProfileImageCommand, UploadProfileImageCommand>();
     }
 }
