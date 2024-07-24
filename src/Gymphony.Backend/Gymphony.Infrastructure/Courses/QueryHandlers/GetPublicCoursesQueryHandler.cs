@@ -4,6 +4,7 @@ using Gymphony.Application.Products.Services;
 using Gymphony.Domain.Common.Queries;
 using Gymphony.Domain.Enums;
 using Gymphony.Persistence.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gymphony.Infrastructure.Courses.QueryHandlers;
 
@@ -13,7 +14,9 @@ public class GetPublicCoursesQueryHandler(ICourseRepository courseRepository, IP
     public Task<PublicCoursesStatusGroupDto> Handle(GetPublicCoursesQuery request, CancellationToken cancellationToken)
     {
         var courses = courseRepository.Get(course => course.Status == ContentStatus.Activated 
-        || course.Status == ContentStatus.Published, queryOptions: new QueryOptions(QueryTrackingMode.AsNoTracking));
+        || course.Status == ContentStatus.Published, queryOptions: new QueryOptions(QueryTrackingMode.AsNoTracking))
+            .Include(course => course.CourseImages!)
+            .ThenInclude(ci => ci.StorageFile);
 
         var result = productsMapperService.MapToPublicGroupedCourses(courses);
 

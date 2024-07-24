@@ -16,7 +16,8 @@ public class CourseMapper : Profile
 
         CreateMap<Course, CourseDto>()
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
-            .ForMember(dest => dest.DurationUnit, opt => opt.MapFrom(src => src.DurationUnit.ToString()));
+            .ForMember(dest => dest.DurationUnit, opt => opt.MapFrom(src => src.DurationUnit.ToString()))
+            .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.CourseImages));
 
         CreateMap<CreateCourseScheduleCommand, CourseSchedule>()
             .ForMember(dest => dest.Day, opt => opt.MapFrom(src => Enum.Parse<DayOfWeek>(src.Day)));

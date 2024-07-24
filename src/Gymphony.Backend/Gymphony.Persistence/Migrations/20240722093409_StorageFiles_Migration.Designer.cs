@@ -3,6 +3,7 @@ using System;
 using Gymphony.Persistence.DataContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gymphony.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240722093409_StorageFiles_Migration")]
+    partial class StorageFiles_Migration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -527,29 +530,6 @@ namespace Gymphony.Persistence.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("Gymphony.Domain.Entities.UserProfileImage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("StorageFileId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StorageFileId")
-                        .IsUnique();
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("UserProfileImages");
-                });
-
             modelBuilder.Entity("Gymphony.Domain.Entities.VerificationToken", b =>
                 {
                     b.Property<Guid>("Id")
@@ -934,25 +914,6 @@ namespace Gymphony.Persistence.Migrations
                     b.Navigation("Subscription");
                 });
 
-            modelBuilder.Entity("Gymphony.Domain.Entities.UserProfileImage", b =>
-                {
-                    b.HasOne("Gymphony.Domain.Entities.StorageFile", "StorageFile")
-                        .WithOne()
-                        .HasForeignKey("Gymphony.Domain.Entities.UserProfileImage", "StorageFileId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Gymphony.Domain.Entities.User", "User")
-                        .WithOne("ProfileImage")
-                        .HasForeignKey("Gymphony.Domain.Entities.UserProfileImage", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("StorageFile");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Gymphony.Domain.Entities.VerificationToken", b =>
                 {
                     b.HasOne("Gymphony.Domain.Entities.User", "User")
@@ -1014,8 +975,6 @@ namespace Gymphony.Persistence.Migrations
             modelBuilder.Entity("Gymphony.Domain.Entities.User", b =>
                 {
                     b.Navigation("AccessToken");
-
-                    b.Navigation("ProfileImage");
 
                     b.Navigation("RefreshToken");
 

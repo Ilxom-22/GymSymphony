@@ -1,4 +1,6 @@
-﻿namespace Gymphony.Application.Courses.Models.Dtos;
+﻿using Gymphony.Application.Common.StorageFiles.Models.Dtos;
+
+namespace Gymphony.Application.Courses.Models.Dtos;
 
 public class CourseDto
 {
@@ -23,4 +25,6 @@ public class CourseDto
     public DateOnly? ActivationDate { get; set; }
 
     public decimal Price { get; set; }
+
+    public List<CourseImageDto> Images { get; set; } = default!;
 }

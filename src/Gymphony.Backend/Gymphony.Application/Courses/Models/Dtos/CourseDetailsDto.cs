@@ -1,4 +1,5 @@
 ﻿using Gymphony.Application.Common.Identity.Models.Dtos;
+using Gymphony.Application.Common.StorageFiles.Models.Dtos;
 
 namespace Gymphony.Application.Courses.Models.Dtos;
 
@@ -35,4 +36,6 @@ public class CourseDetailsDto
     public UserDto? CreatedBy { get; set; }
 
     public UserDto? ModifiedBy { get; set; }
+
+    public List<CourseImageDto> Images { get; set; } = default!;
 }

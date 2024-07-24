@@ -20,7 +20,8 @@ public static partial class HostConfigurations
             .AddValidators()
             .AddMappers()
             .AddPaymentInfrastructure()
-            .AddSubscriptionsInfrastructure();
+            .AddSubscriptionsInfrastructure()
+            .AddFilesInfrastructure();
         
         return builder;
     }

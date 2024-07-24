@@ -20,6 +20,7 @@ public class PublishCourseCommandHandler(ICourseRepository courseRepository, IMa
         var foundCourse = await courseRepository.Get(course => course.Id == request.CourseId)
             .Include(course => course.Schedules)
             .Include(course => course.StripeDetails)
+            .Include(course => course.CourseImages)
             .FirstOrDefaultAsync(cancellationToken)
             ?? throw new ArgumentException($"Course with id {request.CourseId} does not exist!");
 
@@ -28,6 +29,9 @@ public class PublishCourseCommandHandler(ICourseRepository courseRepository, IMa
 
         if (foundCourse.Status != ContentStatus.Draft)
             throw new InvalidEntityStateChangeException<Course>($"Publishing Courses is only allowed for courses in Draft status.");
+
+        if (foundCourse.CourseImages is null || foundCourse.CourseImages.Count == 0)
+            throw new InvalidEntityStateChangeException<Course>($"Upload at least one image of a course to publish it.");
 
         if (request.ActivationDate < DateOnly.FromDateTime(DateTime.UtcNow))
             throw new ArgumentException("The course activation time cannot be set for a date and time that has already passed.");

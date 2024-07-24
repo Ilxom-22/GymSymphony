@@ -19,6 +19,8 @@ public abstract class User : AuditableEntity
 
     public string AuthDataHash { get; set; } = default!;
 
+    public UserProfileImage? ProfileImage { get; set; }
+
     public AccessToken? AccessToken { get; set; }
     
     public RefreshToken? RefreshToken { get; set; }

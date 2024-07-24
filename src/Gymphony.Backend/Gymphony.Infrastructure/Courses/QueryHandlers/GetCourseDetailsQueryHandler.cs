@@ -15,6 +15,8 @@ public class GetCourseDetailsQueryHandler(ICourseRepository courseRepository, IM
             new QueryOptions(QueryTrackingMode.AsNoTracking))
             .Include(course => course.CreatedBy)
             .Include(course => course.ModifiedBy)
+            .Include(course => course.CourseImages!)
+            .ThenInclude(ci => ci.StorageFile)
             .FirstOrDefaultAsync(cancellationToken)
             ?? throw new ArgumentException($"Course with id {request.CourseId} does not exist!");
 
