@@ -5,7 +5,6 @@ using Gymphony.Domain.Common.Commands;
 using Gymphony.Domain.Enums;
 using Gymphony.Persistence.Repositories.Interfaces;
 using MediatR;
-using ValidationException = System.ComponentModel.DataAnnotations.ValidationException;
 
 namespace Gymphony.Infrastructure.Common.Identity.CommandHandlers;
 
