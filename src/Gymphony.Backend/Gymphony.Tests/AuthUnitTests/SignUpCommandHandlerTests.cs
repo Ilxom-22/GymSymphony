@@ -5,6 +5,7 @@ using Gymphony.Application.Common.Identity.Commands;
 using Gymphony.Application.Common.Identity.Models.Dtos;
 using Gymphony.Domain.Enums;
 using Gymphony.Infrastructure.Common.Identity.CommandHandlers;
+using Gymphony.Infrastructure.Common.Identity.Validators;
 using Gymphony.Persistence.Repositories.Interfaces;
 using MediatR;
 using NSubstitute;
@@ -15,7 +16,7 @@ public class SignUpCommandHandlerTests
 {
     private readonly IMediator _mediator = Substitute.For<IMediator>();
     private readonly IUserRepository _userRepository = Substitute.For<IUserRepository>();
-    private readonly IValidator<SignUpDetails> _validator = Substitute.For<IValidator<SignUpDetails>>();
+    private readonly IValidator<SignUpDetails> _validator = new SignUpDetailsValidator();
     private readonly SignUpCommandHandler _handler;
     private readonly Faker<SignUpDetails> _fakeSignUpDetails = new Faker<SignUpDetails>()
             .RuleFor(d => d.FirstName, f => f.Name.FirstName())
@@ -65,16 +66,13 @@ public class SignUpCommandHandlerTests
         };
 
         _userRepository.UserExists(command.SignUpDetails.EmailAddress).Returns(false);
-        var validationFailure = new FluentValidation.Results.ValidationFailure("EmailAddress", "Invalid email");
-        var validationResult = new FluentValidation.Results.ValidationResult(new[] { validationFailure });
-        _validator.ValidateAsync(signUpDetails, Arg.Any<CancellationToken>()).Returns(validationResult);
 
         // Act
         Func<Task> act = () => _handler.Handle(command, CancellationToken.None);
 
         // Assert
         await act.Should().ThrowAsync<FluentValidation.ValidationException>()
-            .WithMessage("Invalid email");
+            .WithMessage("Invalid Email Address! Please try again!");
     }
 
     [Fact]
@@ -82,6 +80,7 @@ public class SignUpCommandHandlerTests
     {
         // Arrange
         var signUpDetails = _fakeSignUpDetails.Generate();
+        signUpDetails.AuthData = "hiel$I29R";
         var command = new SignUpCommand
         {
             SignUpDetails = signUpDetails,
@@ -90,9 +89,8 @@ public class SignUpCommandHandlerTests
         };
 
         _userRepository.UserExists(command.SignUpDetails.EmailAddress).Returns(false);
-        var validationResult = new FluentValidation.Results.ValidationResult();
-        _validator.ValidateAsync(signUpDetails, Arg.Any<CancellationToken>()).Returns(validationResult);
-        var expectedUserDto = new UserDto { EmailAddress = signUpDetails.EmailAddress };
+        var expectedUserDto = new UserDto { EmailAddress = signUpDetails.EmailAddress, FirstName = signUpDetails.FirstName, LastName = signUpDetails.LastName, Role = Role.Admin.ToString() };
+
         _mediator.Send(Arg.Any<AdminSignUpCommand>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(expectedUserDto));
 
         // Act
@@ -108,6 +106,7 @@ public class SignUpCommandHandlerTests
     {
         // Arrange
         var signUpDetails = _fakeSignUpDetails.Generate();
+        signUpDetails.AuthData = "hiel$I29R";
         var command = new SignUpCommand
         {
             SignUpDetails = signUpDetails,
@@ -116,9 +115,7 @@ public class SignUpCommandHandlerTests
         };
 
         _userRepository.UserExists(command.SignUpDetails.EmailAddress).Returns(false);
-        var validationResult = new FluentValidation.Results.ValidationResult();
-        _validator.ValidateAsync(signUpDetails, Arg.Any<CancellationToken>()).Returns(validationResult);
-        var expectedUserDto = new UserDto { EmailAddress = signUpDetails.EmailAddress };
+        var expectedUserDto = new UserDto { EmailAddress = signUpDetails.EmailAddress, FirstName = signUpDetails.FirstName, LastName = signUpDetails.LastName, Role = Role.Member.ToString() };
         _mediator.Send(Arg.Any<MemberSignUpCommand>(), Arg.Any<CancellationToken>()).Returns(Task.FromResult(expectedUserDto));
 
         // Act
