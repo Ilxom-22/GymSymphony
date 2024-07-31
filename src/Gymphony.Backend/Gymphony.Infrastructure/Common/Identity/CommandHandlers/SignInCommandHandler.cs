@@ -48,7 +48,10 @@ public class SignInCommandHandler(
         if (foundUser.Status == AccountStatus.Blocked)
             throw new AuthenticationException(
                 "Your account has been blocked. Please wait for an administrator to unblock it. We apologize for any inconvenience this may cause.");
-
+        
+        if (foundUser is { Role: Role.Admin, Status: AccountStatus.Unverified })
+            foundUser.Status = AccountStatus.Active;
+        
         return foundUser;
     }
 

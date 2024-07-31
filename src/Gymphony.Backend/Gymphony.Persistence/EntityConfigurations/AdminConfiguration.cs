@@ -8,6 +8,9 @@ public class AdminConfiguration : IEntityTypeConfiguration<Admin>
 {
     public void Configure(EntityTypeBuilder<Admin> builder)
     {
-        builder.Property(admin => admin.CreatedByUserId).IsRequired();
+        builder.HasOne<Admin>()
+            .WithMany()
+            .HasForeignKey(admin => admin.CreatedByUserId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

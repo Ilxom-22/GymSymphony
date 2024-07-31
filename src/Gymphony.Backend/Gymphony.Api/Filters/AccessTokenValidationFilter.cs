@@ -18,6 +18,15 @@ public class AccessTokenValidationFilter(
         ActionExecutingContext context,
         ActionExecutionDelegate next)
     {
+        var isAllowAnonymous = context.ActionDescriptor.EndpointMetadata
+            .Any(endpointMetadata => endpointMetadata is AllowAnonymousAttribute);
+
+        if (isAllowAnonymous)
+        {
+            await next();
+            return;
+        }
+
         var isAuthorized = context.ActionDescriptor.EndpointMetadata
             .Any(endpointMetadata => endpointMetadata is AuthorizeAttribute);
         

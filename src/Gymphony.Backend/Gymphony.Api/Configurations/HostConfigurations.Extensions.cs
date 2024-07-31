@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text;
+using Azure.Storage.Blobs;
 using FluentValidation;
 using Gymphony.Api.Data;
 using Gymphony.Api.Filters;
@@ -8,12 +9,23 @@ using Gymphony.Application.Common.Identity.Models.Settings;
 using Gymphony.Application.Common.Identity.Services;
 using Gymphony.Application.Common.Notifications.Brokers;
 using Gymphony.Application.Common.Notifications.Models.Settings;
+using Gymphony.Application.Common.Payments.Brokers;
+using Gymphony.Application.Common.Payments.Models.Settings;
 using Gymphony.Application.Common.Settings;
+using Gymphony.Application.Common.StorageFiles.Brokers;
+using Gymphony.Application.Common.StorageFiles.Models.Settings;
+using Gymphony.Application.Courses.Services;
+using Gymphony.Application.Products.Services;
 using Gymphony.Domain.Brokers;
 using Gymphony.Infrastructure.Common.EventBus.Brokers;
 using Gymphony.Infrastructure.Common.Identity.Brokers;
 using Gymphony.Infrastructure.Common.Identity.Services;
 using Gymphony.Infrastructure.Common.Notifications.Brokers;
+using Gymphony.Infrastructure.Common.Payments.Brokers;
+using Gymphony.Infrastructure.Common.Payments.Services;
+using Gymphony.Infrastructure.Common.StorageFiles.Brokers;
+using Gymphony.Infrastructure.Courses.Services;
+using Gymphony.Infrastructure.Products.Services;
 using Gymphony.Persistence.DataContexts;
 using Gymphony.Persistence.Extensions;
 using Gymphony.Persistence.Interceptors;
@@ -22,6 +34,7 @@ using Gymphony.Persistence.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Stripe;
 
 namespace Gymphony.Api.Configurations;
 
@@ -105,8 +118,9 @@ public static partial class HostConfigurations
             builder.Services.Configure<ApiSettings>(options =>
             {
                 options.BaseAddress = Environment.GetEnvironmentVariable("ApiBaseAddress")!;
-                options.EmailVerificationEndpointAddress =
-                    Environment.GetEnvironmentVariable("EmailVerificationEndpointAddress")!;
+                options.EmailVerificationUrl =
+                    Environment.GetEnvironmentVariable("EmailVerificationUrl")!;
+                options.PasswordResetUrl = Environment.GetEnvironmentVariable("PasswordResetUrl")!;
             });
         
         return builder;
@@ -159,7 +173,8 @@ public static partial class HostConfigurations
         builder.Services
             .AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IAdminRepository, AdminRepository>()
-            .AddScoped<IMemberRepository, MemberRepository>();
+            .AddScoped<IMemberRepository, MemberRepository>()
+            .AddScoped<IStaffRepository, StaffRepository>();
         
         return builder;
     }
@@ -214,6 +229,58 @@ public static partial class HostConfigurations
         return builder;
     }
 
+    private static WebApplicationBuilder AddProductsInfrastructure(this WebApplicationBuilder builder)
+    {
+        builder.Services
+            .AddScoped<IProductRepository, ProductRepository>()
+            .AddScoped<IMembershipPlanRepository, MembershipPlanRepository>()
+            .AddScoped<ICourseRepository, CourseRepository>()
+            .AddScoped<ICourseScheduleRepository, CourseScheduleRepository>();
+
+        builder.Services
+            .AddTransient<IProductsMapperService, ProductsMapperService>()
+            .AddTransient<ITimeService, TimeService>();
+
+        builder.Services.AddHostedService<ProductStatusUpdaterBackgroundService>();
+        
+        return builder;
+    }
+
+    private static WebApplicationBuilder AddSubscriptionsInfrastructure(this WebApplicationBuilder builder)
+    {
+        builder.Services
+            .AddScoped<ISubscriptionRepository, SubscriptionRepository>()
+            .AddScoped<IMembershipPlanSubscriptionRepository, MembershipPlanSubscriptionRepository>()
+            .AddScoped<ICourseSubscriptionRepository, CourseSubscriptionRepository>()
+            .AddScoped<ICourseScheduleEnrollmentRepository, CourseScheduleEnrollmentRepository>()
+            .AddScoped<IPendingScheduleEnrollmentRepository, PendingScheduleEnrollmentRepository>();
+        
+        return builder;
+    }
+
+    private static WebApplicationBuilder AddFilesInfrastructure(this WebApplicationBuilder builder)
+    {
+        if (builder.Environment.IsDevelopment())
+        {
+            builder.Services.AddSingleton(x => new BlobServiceClient(builder.Configuration.GetConnectionString("StorageAccount")));
+        }
+        else
+        {
+            var storageAccountConnectionString = Environment.GetEnvironmentVariable("AzureStorageAccountConnectionString");
+            builder.Services.AddSingleton(x => new BlobServiceClient(storageAccountConnectionString));
+        }
+
+        builder.Services.Configure<StorageFileSettings>(builder.Configuration.GetSection(nameof(StorageFileSettings)));
+
+        builder.Services.AddScoped<IAzureBlobStorageBroker, AzureBlobStorageBroker>();
+
+        builder.Services
+            .AddScoped<IStorageFileRepository, StorageFileRepository>()
+            .AddScoped<ICourseImageRepository, CourseImageRepository>();
+
+        return builder;
+    }
+
     private static WebApplicationBuilder AddValidators(this WebApplicationBuilder builder)
     {
         builder.Services.AddValidatorsFromAssemblies(Assemblies);
@@ -224,6 +291,58 @@ public static partial class HostConfigurations
     private static WebApplicationBuilder AddMappers(this WebApplicationBuilder builder)
     {
         builder.Services.AddAutoMapper(Assemblies);
+
+        return builder;
+    }
+
+    private static WebApplicationBuilder AddPaymentInfrastructure(this WebApplicationBuilder builder)
+    {
+        if (builder.Environment.IsDevelopment())
+        {
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection(nameof(StripeSettings)));
+
+            StripeConfiguration.ApiKey = builder.Configuration["StripeSettings:SecretKey"];
+        }
+        else
+        {
+            builder.Services.Configure<StripeSettings>(options =>
+            {
+                options.PublicKey = Environment.GetEnvironmentVariable("StripePublicKey")!;
+                options.SecretKey = Environment.GetEnvironmentVariable("StripeSecretKey")!;
+                options.WebHookSecret = Environment.GetEnvironmentVariable("StripeWebHookSecret")!;
+            });
+            
+            StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("StripeSecretKey");
+        }
+
+        builder.Services
+            .AddSingleton<StripeProductService>()
+            .AddSingleton<StripePriceService>()
+            .AddSingleton<StripeCheckoutSessionService>()
+            .AddSingleton<StripeBillingPortalSessionService>()
+            .AddSingleton<StripeCustomerService>()
+            .AddSingleton<StripeSubscriptionService>()
+            .AddSingleton<StripeSubscriptionItemService>();
+
+        builder.Services
+            .AddSingleton<IStripeProductBroker, StripeProductBroker>()
+            .AddSingleton<IStripePriceBroker, StripePriceBroker>()
+            .AddSingleton<IStripeCheckoutSessionBroker, StripeCheckoutSessionBroker>()
+            .AddSingleton<IStripeBillingPortalSessionBroker, StripeBillingPortalSessionBroker>()
+            .AddSingleton<IStripeCustomerBroker, StripeCustomerBroker>()
+            .AddSingleton<IStripeSubscriptionBroker, StripeSubscriptionBroker>()
+            .AddSingleton<IStripeSubscriptionItemBroker, StripeSubscriptionItemBroker>();
+
+        return builder;
+    }
+    
+    private static WebApplicationBuilder AddCors(this WebApplicationBuilder builder)
+    {
+        builder.Services.AddCors(options => options.AddPolicy("Policy",
+            policy => policy
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod()));
 
         return builder;
     }
@@ -255,6 +374,13 @@ public static partial class HostConfigurations
     private static WebApplication UseExposers(this WebApplication app)
     {
         app.MapControllers();
+
+        return app;
+    }
+    
+    private static WebApplication UseCors(this WebApplication app)
+    {
+        app.UseCors("Policy");
 
         return app;
     }

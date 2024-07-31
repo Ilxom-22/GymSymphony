@@ -56,6 +56,15 @@ public abstract class EntityRepositoryBase<TContext, TEntity>(TContext context)
 
         return entity;
     }
+
+    protected async ValueTask<int> BatchDeleteAsync(
+        Expression<Func<TEntity, bool>> batchDeletePredicate,
+        CancellationToken cancellationToken = default)
+    {
+        var entities = context.Set<TEntity>().Where(batchDeletePredicate);
+
+        return await entities.ExecuteDeleteAsync(cancellationToken);
+    }
     
     private async ValueTask SaveChangesIfRequested(
         bool saveChanges,

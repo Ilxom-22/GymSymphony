@@ -9,6 +9,7 @@ using Gymphony.Domain.Constants;
 using Gymphony.Domain.Enums;
 using MediatR;
 using Microsoft.Extensions.Options;
+using System.Web;
 
 namespace Gymphony.Infrastructure.Common.Notifications.EventHandlers;
 
@@ -31,7 +32,7 @@ public class EmailVerificationNotificationRequestedEventHandler(
 
         await mediator.Send(new CreateVerificationTokenCommand { VerificationToken = emailVerificationToken }, cancellationToken);
 
-        var verificationLink = _apiSettings.EmailVerificationEndpointAddress + $"?Token={emailVerificationToken.Token}";
+        var verificationLink = _apiSettings.EmailVerificationUrl + $"?Token={HttpUtility.UrlEncode(emailVerificationToken.Token)}";
         
         message.NotificationMethod = NotificationMethod.Email;
         message.Recipient = notification.Recipient;

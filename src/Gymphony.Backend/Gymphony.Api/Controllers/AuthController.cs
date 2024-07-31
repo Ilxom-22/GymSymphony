@@ -89,12 +89,12 @@ public class AuthController(IMediator mediator, IEventBusBroker eventBusBroker) 
         return NoContent();
     }
 
-    [HttpGet("verify-email")]
-    public async ValueTask<IActionResult> VerifyEmailAsync([FromQuery] VerifyEmailCommand verifyEmailCommand, CancellationToken cancellationToken)
+    [HttpPost("verify-email")]
+    public async ValueTask<IActionResult> VerifyEmailAsync([FromBody] VerifyEmailCommand verifyEmailCommand, CancellationToken cancellationToken)
     {
         await mediator.Send(verifyEmailCommand, cancellationToken);
-        
-        return Accepted();
+
+        return Ok();
     }
 
     [HttpGet("resend-email-verification-message")]
@@ -107,9 +107,9 @@ public class AuthController(IMediator mediator, IEventBusBroker eventBusBroker) 
         return NoContent();
     }
 
-    [HttpPost("forgot-password")]
+    [HttpPost("forgot-password/{emailAddress}")]
     public async ValueTask<IActionResult> ForgotPassword(
-        [FromBody] string emailAddress,
+        [FromRoute] string emailAddress,
         CancellationToken cancellationToken)
     {
         var forgotPasswordEvent = new ForgotPasswordEvent { EmailAddress = emailAddress };
