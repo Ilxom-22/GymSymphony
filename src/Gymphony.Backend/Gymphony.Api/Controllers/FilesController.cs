@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Gymphony.Application.Common.Identity.Models.Dtos;
 using Gymphony.Application.Common.StorageFiles.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,7 @@ public class FilesController(IMediator mediator, IMapper mapper) : ControllerBas
     [Authorize(Roles = "Admin")]
     [HttpPost("courses/{courseId:guid}")]
     public async ValueTask<IActionResult> UploadCourseImageAsync(
-        [FromForm] IFormFile courseImage,
+        IFormFile courseImage,
         [FromRoute] Guid courseId,
         CancellationToken cancellationToken)
     {
@@ -37,7 +38,7 @@ public class FilesController(IMediator mediator, IMapper mapper) : ControllerBas
     [Authorize(Roles = "Admin")]
     [HttpPost("profileImages/staff/{staffId:guid}")]
     public async ValueTask<IActionResult> UploadStaffProfileImageAsync(
-        [FromForm] IFormFile staffProfileImage,
+        IFormFile staffProfileImage,
         [FromRoute] Guid staffId,
         CancellationToken cancellationToken)
     {
@@ -52,7 +53,7 @@ public class FilesController(IMediator mediator, IMapper mapper) : ControllerBas
     [Authorize(Roles = "Admin, Member")]
     [HttpPost("profileImages")]
     public async ValueTask<IActionResult> UploadProfileImageAsync(
-        [FromForm] IFormFile profileImage,
+        IFormFile profileImage,
         CancellationToken cancellationToken)
     {
         var uploadUserProfileImageCommand = mapper.Map<UploadUserProfileImageCommand>(profileImage);
