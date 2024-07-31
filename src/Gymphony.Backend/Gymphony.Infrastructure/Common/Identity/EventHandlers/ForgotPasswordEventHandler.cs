@@ -25,7 +25,7 @@ public class ForgotPasswordEventHandler(
             ?? throw new ArgumentException($"User with email address {request.EmailAddress} does not exist!");
         
         if (user.AuthenticationProvider != Provider.EmailPassword)
-            throw new InvalidEntityStateChangeException<User>($"Since you signed up using your {user.AuthenticationProvider.ToString()} account, all the passwords are managed by your provider. Please try to sign in using your {user.AuthenticationProvider.ToString()} account!");
+            throw new InvalidEntityStateChangeException<User>($"Since you signed up using your {user.AuthenticationProvider} account, all the passwords are managed by your provider. Please try to sign in using your {user.AuthenticationProvider} account!");
 
         await mediator.Publish(new PasswordResetNotificationRequestedEvent { Recipient = user }, cancellationToken);
     }
