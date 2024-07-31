@@ -118,8 +118,9 @@ public static partial class HostConfigurations
             builder.Services.Configure<ApiSettings>(options =>
             {
                 options.BaseAddress = Environment.GetEnvironmentVariable("ApiBaseAddress")!;
-                options.EmailVerificationEndpointAddress =
-                    Environment.GetEnvironmentVariable("EmailVerificationEndpointAddress")!;
+                options.EmailVerificationUrl =
+                    Environment.GetEnvironmentVariable("EmailVerificationUrl")!;
+                options.PasswordResetUrl = Environment.GetEnvironmentVariable("PasswordResetUrl")!;
             });
         
         return builder;
@@ -308,6 +309,7 @@ public static partial class HostConfigurations
             {
                 options.PublicKey = Environment.GetEnvironmentVariable("StripePublicKey")!;
                 options.SecretKey = Environment.GetEnvironmentVariable("StripeSecretKey")!;
+                options.WebHookSecret = Environment.GetEnvironmentVariable("StripeWebHookSecret")!;
             });
             
             StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("StripeSecretKey");
@@ -336,7 +338,7 @@ public static partial class HostConfigurations
     
     private static WebApplicationBuilder AddCors(this WebApplicationBuilder builder)
     {
-        builder.Services.AddCors(options => options.AddPolicy("AllowSpecificOrigin",
+        builder.Services.AddCors(options => options.AddPolicy("Policy",
             policy => policy
                 .AllowAnyOrigin()
                 .AllowAnyHeader()
@@ -378,7 +380,7 @@ public static partial class HostConfigurations
     
     private static WebApplication UseCors(this WebApplication app)
     {
-        app.UseCors("AllowSpecificOrigin");
+        app.UseCors("Policy");
 
         return app;
     }
