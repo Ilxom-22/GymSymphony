@@ -8,6 +8,7 @@ using Gymphony.Domain.Entities;
 using Gymphony.Domain.Enums;
 using Gymphony.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Authentication;
 
 namespace Gymphony.Infrastructure.Common.Identity.CommandHandlers;
 
@@ -19,7 +20,8 @@ public class BlockAdminCommandHandler(
 {
     public async Task<bool> Handle(BlockAdminCommand request, CancellationToken cancellationToken)
     {
-        var actionAdminId = (Guid)requestContextProvider.GetUserIdFromClaims()!;
+        var actionAdminId = requestContextProvider.GetUserIdFromClaims()
+            ?? throw new AuthenticationException("Unauthorized access!");
         
         if (actionAdminId == request.AdminId && adminRepository.GetActiveAdminsCount() < 2)
             throw new InvalidEntityStateChangeException<Admin>(
@@ -30,7 +32,7 @@ public class BlockAdminCommandHandler(
             .Include(admin => admin.AccessToken)
             .Include(admin => admin.RefreshToken)
             .FirstOrDefaultAsync(cancellationToken)
-                         ?? throw new EntityNotFoundException<Admin>($"Admin with id {request.AdminId} not found!");
+                ?? throw new EntityNotFoundException<Admin>($"Admin with id {request.AdminId} not found!");
 
         if (foundAdmin.Status == AccountStatus.Blocked)
             return true;
