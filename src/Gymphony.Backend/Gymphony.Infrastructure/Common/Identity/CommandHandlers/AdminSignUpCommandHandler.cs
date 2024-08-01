@@ -4,7 +4,6 @@ using Gymphony.Application.Common.Identity.Commands;
 using Gymphony.Application.Common.Identity.Events;
 using Gymphony.Application.Common.Identity.Models.Dtos;
 using Gymphony.Application.Common.Identity.Services;
-using Gymphony.Domain.Brokers;
 using Gymphony.Domain.Common.Commands;
 using Gymphony.Domain.Entities;
 using Gymphony.Persistence.Repositories.Interfaces;
@@ -13,7 +12,6 @@ namespace Gymphony.Infrastructure.Common.Identity.CommandHandlers;
 
 public class AdminSignUpCommandHandler(
     IMapper mapper,
-    IRequestContextProvider requestContextProvider,
     IAdminRepository adminRepository,
     IPasswordHasherService passwordHasherService, 
     IEventBusBroker eventBusBroker) 
