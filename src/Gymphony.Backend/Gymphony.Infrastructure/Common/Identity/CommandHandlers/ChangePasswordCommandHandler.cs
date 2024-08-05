@@ -15,6 +15,7 @@ public class ChangePasswordCommandHandler(
     IRequestContextProvider requestContextProvider,
     IPasswordHasherService passwordHasherService,
     IUserRepository userRepository,
+    IAdminRepository adminRepository,
     IValidator<string> passwordValidator)
     : ICommandHandler<ChangePasswordCommand, bool>
 {
@@ -30,10 +31,10 @@ public class ChangePasswordCommandHandler(
             throw new InvalidEntityStateChangeException<User>($"Since you signed up using your {user.AuthenticationProvider.ToString()} account, all the passwords are managed by your provider. You can change your password by visiting your account settings on {user.AuthenticationProvider.ToString()}");
 
         if (!passwordHasherService.ValidatePassword(request.OldPassword, user.AuthDataHash))
-            throw new AuthenticationException("Invalid old password!");
+            throw new ArgumentException("Invalid old password!");
 
         if (passwordHasherService.ValidatePassword(request.NewPassword, user.AuthDataHash))
-            throw new AuthenticationException("New Password Cannot Be the Same as Old Password!");
+            throw new ArgumentException("New Password Cannot Be the Same as Old Password!");
 
         var validationResult = await passwordValidator.ValidateAsync(request.NewPassword, cancellationToken);
 
@@ -41,8 +42,18 @@ public class ChangePasswordCommandHandler(
             throw new ArgumentException(validationResult.Errors[0].ToString());
 
         user.AuthDataHash = passwordHasherService.HashPassword(request.NewPassword);
-        await userRepository.UpdateAsync(user, cancellationToken: cancellationToken);
-        
+
+        if (user.Role != Role.Admin)
+        {
+            await userRepository.UpdateAsync(user, cancellationToken: cancellationToken);
+
+            return true;
+        }
+
+        var admin = (Admin)user;
+        admin.TemporaryPasswordChanged = true;
+        await adminRepository.UpdateAsync(admin, cancellationToken: cancellationToken);
+
         return true;
     }
 }
