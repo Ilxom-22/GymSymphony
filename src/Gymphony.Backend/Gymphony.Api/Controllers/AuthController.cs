@@ -97,17 +97,18 @@ public class AuthController(IMediator mediator, IEventBusBroker eventBusBroker) 
         return Ok();
     }
 
-    [HttpGet("resend-email-verification-message")]
+    [HttpGet("resend-email-verification-message/{emailAddress}")]
     public async ValueTask<IActionResult> ResendVerificationEmail(
-        [FromQuery] ResendEmailVerificationMessageCommand resendEmailVerificationMessageCommand,
+        [FromRoute] string emailAddress,
         CancellationToken cancellationToken)
     {
-        await mediator.Send(resendEmailVerificationMessageCommand, cancellationToken);
+        var command = new ResendEmailVerificationMessageCommand { EmailAddress = emailAddress };
+        await mediator.Send(command, cancellationToken);
         
         return NoContent();
     }
 
-    [HttpPost("forgot-password/{emailAddress}")]
+    [HttpGet("forgot-password/{emailAddress}")]
     public async ValueTask<IActionResult> ForgotPassword(
         [FromRoute] string emailAddress,
         CancellationToken cancellationToken)
