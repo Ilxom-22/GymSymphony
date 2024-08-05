@@ -43,7 +43,7 @@ public class SignInCommandHandler(
                         ?? throw new AuthenticationException("Provided login details are invalid! Please, try again!");
 
         if (!passwordHasherService.ValidatePassword(signInDetails.AuthData, foundUser.AuthDataHash))
-            throw new AuthenticationException("Provided login details are invalid! Please, try again!");
+            throw new ValidationException("Provided login details are invalid! Please, try again!");
 
         if (foundUser.Status == AccountStatus.Blocked)
             throw new AuthenticationException(

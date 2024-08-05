@@ -67,7 +67,7 @@ public class SignInCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowAuthenticationException_WhenPasswordIsInvalid()
+    public async Task Handle_ShouldThrowValidationException_WhenPasswordIsInvalid()
     {
         // Arrange
         var signInDetails = new SignInDetails { EmailAddress = _faker.Internet.Email(), AuthData = _faker.Internet.Password() };
@@ -83,7 +83,7 @@ public class SignInCommandHandlerTests
         Func<Task> act = () => _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        await act.Should().ThrowAsync<AuthenticationException>()
+        await act.Should().ThrowAsync<FluentValidation.ValidationException>()
             .WithMessage("Provided login details are invalid! Please, try again!");
     }
 
