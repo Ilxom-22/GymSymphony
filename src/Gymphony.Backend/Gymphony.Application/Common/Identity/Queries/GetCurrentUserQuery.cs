@@ -5,5 +5,5 @@ namespace Gymphony.Application.Common.Identity.Queries;
 
 public class GetCurrentUserQuery : IQuery<UserDto>
 {
-    
+
 }
