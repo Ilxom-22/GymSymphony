@@ -11,6 +11,7 @@ using Gymphony.Persistence.Repositories.Interfaces;
 using MockQueryable.NSubstitute;
 using NSubstitute;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using System.Security.Authentication;
 
 namespace Gymphony.Tests.AuthUnitTests;
@@ -20,11 +21,12 @@ public class GetCurrentUserQueryHandlerTests
     private readonly IRequestContextProvider _requestContextProvider = Substitute.For<IRequestContextProvider>();
     private readonly IMapper _mapper = Substitute.For<IMapper>();
     private readonly IUserRepository _userRepository = Substitute.For<IUserRepository>();
+    private readonly IAdminRepository _adminRepository = Substitute.For<IAdminRepository>();
     private readonly GetCurrentUserQueryHandler _handler;
 
     public GetCurrentUserQueryHandlerTests()
     {
-        _handler = new GetCurrentUserQueryHandler(_requestContextProvider, _mapper, _userRepository);
+        _handler = new GetCurrentUserQueryHandler(_requestContextProvider, _mapper, _userRepository, _adminRepository);
     }
 
     [Fact]
@@ -69,12 +71,15 @@ public class GetCurrentUserQueryHandlerTests
         var userId = Guid.NewGuid();
         var query = new GetCurrentUserQuery();
 
-        var user = new Member { Id = userId, EmailAddress = "test@example.com" };
+        var user = new Admin { Id = userId, EmailAddress = "test@example.com" };
         var users = new List<User> { user }.AsQueryable().BuildMock();
+        var admins = new List<Admin> { user }.AsQueryable().BuildMock();
 
         _requestContextProvider.GetUserIdFromClaims().Returns(userId);
         _userRepository.Get(Arg.Any<Expression<Func<User, bool>>>(), Arg.Any<QueryOptions>())
             .Returns(users);
+        _adminRepository.Get(Arg.Any<Expression<Func<Admin, bool>>>(), Arg.Any<QueryOptions>())
+            .Returns(admins);
 
         var userDto = new UserDto { Id = userId, EmailAddress = "test@example.com" };
         _mapper.Map<UserDto>(user).Returns(userDto);
@@ -96,7 +101,10 @@ public class GetCurrentUserQueryHandlerTests
 
         var profileImage = new UserProfileImage { StorageFile = new StorageFile { Id = Guid.NewGuid(), Url = "url/to/image" } };
         var user = new Admin { Id = userId, EmailAddress = "test@example.com", ProfileImage = profileImage };
+        var admins = new List<Admin> { user }.AsQueryable().BuildMock();
         var users = new List<User> { user }.AsQueryable().BuildMock();
+        _adminRepository.Get(Arg.Any<Expression<Func<Admin, bool>>>(), Arg.Any<QueryOptions>())
+           .Returns(admins);
 
         _requestContextProvider.GetUserIdFromClaims().Returns(userId);
         _userRepository.Get(Arg.Any<Expression<Func<User, bool>>>(), Arg.Any<QueryOptions>())

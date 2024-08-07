@@ -1,4 +1,3 @@
-using AutoMapper;
 using Force.DeepCloner;
 using Gymphony.Application.Common.Payments.Brokers;
 using Gymphony.Application.Common.Payments.Commands;
@@ -6,7 +5,7 @@ using Gymphony.Domain.Common.Commands;
 
 namespace Gymphony.Infrastructure.Common.Payments.CommandHandlers;
 
-public class UpdateStripePriceCommandHandler(IStripePriceBroker stripePriceBroker, IMapper mapper) : ICommandHandler<UpdateStripePriceCommand, string>
+public class UpdateStripePriceCommandHandler(IStripePriceBroker stripePriceBroker) : ICommandHandler<UpdateStripePriceCommand, string>
 {
     public async Task<string> Handle(UpdateStripePriceCommand request, CancellationToken cancellationToken)
     {
