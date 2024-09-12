@@ -1,3 +1,4 @@
+using Gymphony.Application.Courses.Queries;
 using Gymphony.Application.Subscriptions.Commands;
 using Gymphony.Application.Subscriptions.Queries;
 using MediatR;
@@ -29,6 +30,14 @@ public class SubscriptionsController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(query, cancellationToken);
 
         return result.Count == 0 ? NoContent() : Ok(result);
+    }
+
+    [HttpGet("my-schedules")]
+    public async ValueTask<IActionResult> GetMySchedules(CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new GetMySchedulesQuery());
+
+        return Ok(result);
     }
 
     [HttpPost("subscribe-for-membershipPlan")]
