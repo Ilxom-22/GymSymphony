@@ -24,7 +24,9 @@ public class CourseDto
 
     public DateOnly? ActivationDate { get; set; }
 
+    public DateOnly? DeactivationDate { get; set; }
+
     public decimal Price { get; set; }
 
-    public List<CourseImageDto> Images { get; set; } = default!;
+    public CourseImageDto Image { get; set; } = default!;
 }

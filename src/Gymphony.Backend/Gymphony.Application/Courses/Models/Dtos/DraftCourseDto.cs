@@ -1,4 +1,6 @@
-﻿namespace Gymphony.Application.Courses.Models.Dtos;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Gymphony.Application.Courses.Models.Dtos;
 
 public class DraftCourseDto
 {
@@ -17,4 +19,6 @@ public class DraftCourseDto
     public int EnrollmentsCountPerWeek { get; set; }
 
     public decimal Price { get; set; }
+
+    public IFormFile CourseImage { get; set; } = default!;
 }

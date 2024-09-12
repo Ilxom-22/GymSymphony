@@ -11,7 +11,8 @@ public class UserMapper : Profile
     {
         CreateMap<SignUpDetails, Admin>();
         CreateMap<SignUpDetails, Member>();
-        CreateMap<StaffSignUpCommand, Staff>();
+        CreateMap<StaffSignUpCommand, Staff>()
+            .ForMember(dest => dest.ProfileImage, opt => opt.Ignore());
         
         CreateMap<Member, UserDto>()
             .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Role.ToString()))

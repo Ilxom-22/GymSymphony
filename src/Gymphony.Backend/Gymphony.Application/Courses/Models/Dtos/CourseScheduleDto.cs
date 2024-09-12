@@ -8,7 +8,7 @@ public class CourseScheduleDto
 
     public Guid CourseId { get; set; }
 
-    public string Day { get; set; } = default!;
+    public DayOfWeek Day { get; set; }
 
     public TimeOnly StartTime { get; set; }
 
@@ -17,4 +17,6 @@ public class CourseScheduleDto
     public ICollection<StaffDto> Instructors { get; set; } = default!;
 
     public bool IsAvaliable { get; set; }
+
+    public int EnrollmentsCount { get; set; }
 }
