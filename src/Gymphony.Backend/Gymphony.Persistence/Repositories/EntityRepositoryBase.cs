@@ -3,6 +3,7 @@ using Gymphony.Domain.Common.Entities;
 using Gymphony.Domain.Common.Queries;
 using Gymphony.Persistence.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Gymphony.Persistence.Repositories;
 
@@ -10,6 +11,48 @@ public abstract class EntityRepositoryBase<TContext, TEntity>(TContext context)
     where TContext : DbContext 
     where TEntity : class, IEntity
 {
+    private IDbContextTransaction? _currentTransaction;
+
+    public async ValueTask BeginTransactionAsync()
+    {
+        if (_currentTransaction != null)
+            throw new InvalidOperationException("A transaction is already in progress.");
+
+        _currentTransaction = await context.Database.BeginTransactionAsync();
+    }
+
+    public async ValueTask CommitTransactionAsync()
+    {
+        if (_currentTransaction == null)
+            throw new InvalidOperationException("No transaction in progress.");
+
+        try
+        {
+            await context.SaveChangesAsync();
+            await _currentTransaction.CommitAsync();
+        }
+        catch
+        {
+            await RollbackTransactionAsync();
+            throw;
+        }
+        finally
+        {
+            await _currentTransaction.DisposeAsync();
+            _currentTransaction = null;
+        }
+    }
+
+    public async ValueTask RollbackTransactionAsync()
+    {
+        if (_currentTransaction != null)
+        {
+            await _currentTransaction.RollbackAsync();
+            await _currentTransaction.DisposeAsync();
+            _currentTransaction = null;
+        }
+    }
+
     protected IQueryable<TEntity> Get(
         Expression<Func<TEntity, bool>>? predicate = default, 
         QueryOptions queryOptions = default)
@@ -65,7 +108,7 @@ public abstract class EntityRepositoryBase<TContext, TEntity>(TContext context)
 
         return await entities.ExecuteDeleteAsync(cancellationToken);
     }
-    
+
     private async ValueTask SaveChangesIfRequested(
         bool saveChanges,
         CancellationToken cancellationToken = default)

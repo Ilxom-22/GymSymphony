@@ -16,5 +16,11 @@ public interface ICourseRepository
 
     ValueTask<Course> UpdateAsync(Course course, bool saveChanges = true, CancellationToken cancellationToken = default);
 
+    ValueTask BeginTransactionAsync();
+
+    ValueTask CommitTransactionAsync();
+
+    ValueTask RollbackTransactionAsync();
+
     ValueTask<Course> DeleteAsync(Course course, bool saveChanges = true, CancellationToken cancellationToken = default);
 }
