@@ -22,12 +22,12 @@ public class MembershipPlanRepository(AppDbContext appDbContext) :
             .FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async ValueTask<bool> MembershipPlanExistsAsync(string name, 
+    public async ValueTask<bool> MembershipPlanExistsAsync(string name, Guid membershipPlanId = new Guid(),
         CancellationToken cancellationToken = default)
     {
         return await base
             .Get(queryOptions: new QueryOptions(QueryTrackingMode.AsNoTracking))
-            .AnyAsync(plan => plan.Name == name, cancellationToken);
+            .AnyAsync(plan => plan.Name == name && plan.Id != membershipPlanId, cancellationToken);
     }
 
     public new ValueTask<MembershipPlan> CreateAsync(MembershipPlan membershipPlan, 

@@ -15,7 +15,7 @@ public class MembershipPlanMapper : Profile
             .ForMember(dest => dest.DurationUnit, opt => opt.MapFrom(src => Enum.Parse<DurationUnit>(src.DurationUnit)));
         
         CreateMap<MembershipPlan, MembershipPlanDto>()
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status == ContentStatus.DeactivationRequested ? "In-Deactivation" : src.Status.ToString()))
             .ForMember(dest => dest.DurationUnit, opt => opt.MapFrom(src => src.DurationUnit.ToString()));
 
         CreateMap<MembershipPlan, SubscriberMembershipPlanDto>();
