@@ -1,5 +1,6 @@
 using Gymphony.Application.Common.Identity.Commands;
 using Gymphony.Application.Common.Identity.Models.Dtos;
+using Gymphony.Application.Common.Identity.Queries;
 using Gymphony.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -12,6 +13,13 @@ namespace Gymphony.Api.Controllers;
 [Route("api/[controller]")]
 public class AdminsController(IMediator mediator) : ControllerBase
 {
+    [HttpGet]
+    public async ValueTask<IActionResult> GetAllAdmins(CancellationToken cancellationToken)
+    {
+        var admins = await mediator.Send(new GetAllAdminsQuery(), cancellationToken);
+        return Ok(admins);
+    }
+
     [HttpPost("sign-up")]
     public async ValueTask<IActionResult> AddAdminAsync(
         [FromBody] SignUpDetails signUpDetails,
