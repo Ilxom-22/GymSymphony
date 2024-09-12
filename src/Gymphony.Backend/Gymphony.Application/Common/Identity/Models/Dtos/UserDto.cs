@@ -16,5 +16,7 @@ public class UserDto
 
     public string EmailAddress { get; set; } = default!;
 
+    public bool TemporaryPasswordChanged { get; set; } = default!;
+
     public UserProfileImageDto? ProfileImage { get; set; }
 }

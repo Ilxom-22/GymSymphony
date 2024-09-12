@@ -19,13 +19,13 @@ public class ResetPasswordCommandHandler(
         var user = await userRepository.Get(user => user.VerificationToken!.Token == request.Token)
             .Include(user => user.VerificationToken)
             .FirstOrDefaultAsync(cancellationToken)
-            ?? throw new ArgumentException("Password reset token is either invalid or expired!");
+            ?? throw new ArgumentException("Password reset link is expired!");
         
         if (user.AuthenticationProvider != Provider.EmailPassword)
-            throw new InvalidEntityStateChangeException<User>($"Since you signed up using your {user.AuthenticationProvider.ToString()} account, all the passwords are managed by your provider. You can reset your password by visiting your account settings on {user.AuthenticationProvider.ToString()}");
+            throw new InvalidEntityStateChangeException<User>($"Since you signed up using your {user.AuthenticationProvider} account, all the passwords are managed by your provider. You can reset your password by visiting your account settings on {user.AuthenticationProvider}");
 
         if (user.VerificationToken?.ExpiryTime < DateTimeOffset.UtcNow)
-            throw new ArgumentException("Password reset token is expired!");
+            throw new ArgumentException("Password reset link is expired!");
 
         if (passwordHasherService.ValidatePassword(request.NewPassword, user.AuthDataHash))
             throw new ArgumentException("New password can't be the same as an old password!");

@@ -17,10 +17,10 @@ public class PasswordResetNotificationRequestedEventHandler(
     IEventBusBroker eventBusBroker,
     IMediator mediator,
     IVerificationTokenGeneratorService verificationTokenGeneratorService,
-    IOptions<ApiSettings> apiSettings)
+    IOptions<ApiClientSettings> apiClientSettings)
     : IEventHandler<PasswordResetNotificationRequestedEvent>
 {
-    private readonly ApiSettings _apiSettings = apiSettings.Value;
+    private readonly ApiClientSettings _apiClientSettings = apiClientSettings.Value;
 
     public async Task Handle(PasswordResetNotificationRequestedEvent notification, CancellationToken cancellationToken)
     {
@@ -32,7 +32,7 @@ public class PasswordResetNotificationRequestedEventHandler(
 
         await mediator.Send(new CreateVerificationTokenCommand { VerificationToken = passwordResetVerificationToken }, cancellationToken);
 
-        var passwordResetLink = _apiSettings.PasswordResetUrl + $"?Token={HttpUtility.UrlEncode(passwordResetVerificationToken.Token)}";
+        var passwordResetLink = _apiClientSettings.PasswordResetUrl + $"?Token={HttpUtility.UrlEncode(passwordResetVerificationToken.Token)}";
 
         message.NotificationMethod = NotificationMethod.Email;
         message.Recipient = notification.Recipient;

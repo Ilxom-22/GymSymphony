@@ -21,6 +21,9 @@ public class SignUpDetailsValidator : AbstractValidator<SignUpDetails>
             .NotEmpty().WithMessage("Email Address field can't be empty!")
             .EmailAddress().WithMessage("Invalid Email Address! Please try again!");
 
+        RuleSet(RuleSets.AdminSignUp.ToString(), () => 
+            RuleFor(user => user.AuthData).Empty());
+
         RuleSet(RuleSets.EmailSignUp.ToString(), () =>
             RuleFor(user => user.AuthData)
                 .SetValidator(new PasswordValidator()));

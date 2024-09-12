@@ -18,6 +18,8 @@ public class StaffRepository(AppDbContext dbContext) : EntityRepositoryBase<AppD
     {
         return await base.Get()
                     .Where(staff => ids.Contains(staff.Id))
+                    .Include(staff => staff.ProfileImage!)
+                    .ThenInclude(image => image.StorageFile)
                     .ToListAsync(cancellationToken);
     }
 

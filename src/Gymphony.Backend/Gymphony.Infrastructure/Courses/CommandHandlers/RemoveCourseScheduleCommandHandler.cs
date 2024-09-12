@@ -20,7 +20,7 @@ public class RemoveCourseScheduleCommandHandler(ICourseScheduleRepository course
         ?? throw new ArgumentException($"Course Schedule with id {request.ScheduleId} does not exist!");
 
         if (courseSchedule.Enrollments > 0)
-            throw new InvalidOperationException("There are active enrollments to the chosen course schedule!");
+            throw new ArgumentException("There are active enrollments to the chosen course schedule!");
 
         await courseScheduleRepository.DeleteAsync(courseSchedule.Schedule, cancellationToken: cancellationToken);
 

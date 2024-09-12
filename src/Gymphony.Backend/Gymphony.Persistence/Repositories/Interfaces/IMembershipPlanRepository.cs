@@ -13,14 +13,14 @@ public interface IMembershipPlanRepository
     ValueTask<MembershipPlan?> GetByIdAsync(Guid id, QueryOptions queryOptions = default,
         CancellationToken cancellationToken = default);
 
-    ValueTask<bool> MembershipPlanExistsAsync(string name, 
+    ValueTask<bool> MembershipPlanExistsAsync(string name, Guid membershipPlanId = new Guid(),
         CancellationToken cancellationToken = default);
-    
-    ValueTask<MembershipPlan> CreateAsync(MembershipPlan membershipPlan, 
+
+    ValueTask<MembershipPlan> CreateAsync(MembershipPlan membershipPlan,
         bool saveChanges = true,
         CancellationToken cancellationToken = default);
 
-    ValueTask<MembershipPlan> UpdateAsync(MembershipPlan membershipPlan, 
+    ValueTask<MembershipPlan> UpdateAsync(MembershipPlan membershipPlan,
         bool saveChanges = true,
         CancellationToken cancellationToken = default);
 

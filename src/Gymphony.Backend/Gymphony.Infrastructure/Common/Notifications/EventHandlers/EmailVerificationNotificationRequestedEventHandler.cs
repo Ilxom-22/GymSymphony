@@ -17,10 +17,10 @@ public class EmailVerificationNotificationRequestedEventHandler(
     IMediator mediator,
     IEventBusBroker eventBusBroker,
     IVerificationTokenGeneratorService verificationTokenGeneratorService,
-    IOptions<ApiSettings> apiSettings)
+    IOptions<ApiClientSettings> apiClientSettings)
     : IEventHandler<EmailVerificationNotificationRequestedEvent>
 {
-    private readonly ApiSettings _apiSettings = apiSettings.Value;
+    private readonly ApiClientSettings _apiClientSettings = apiClientSettings.Value;
     
     public async Task Handle(EmailVerificationNotificationRequestedEvent notification, CancellationToken cancellationToken)
     {
@@ -32,7 +32,7 @@ public class EmailVerificationNotificationRequestedEventHandler(
 
         await mediator.Send(new CreateVerificationTokenCommand { VerificationToken = emailVerificationToken }, cancellationToken);
 
-        var verificationLink = _apiSettings.EmailVerificationUrl + $"?Token={HttpUtility.UrlEncode(emailVerificationToken.Token)}";
+        var verificationLink = _apiClientSettings.EmailVerificationUrl + $"?Token={HttpUtility.UrlEncode(emailVerificationToken.Token)}";
         
         message.NotificationMethod = NotificationMethod.Email;
         message.Recipient = notification.Recipient;

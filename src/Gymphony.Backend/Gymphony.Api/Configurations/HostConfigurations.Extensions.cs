@@ -113,15 +113,24 @@ public static partial class HostConfigurations
         builder.Services.AddScoped<IRequestContextProvider, RequestContextProvider>();
 
         if (builder.Environment.IsDevelopment())
+        {
             builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection(nameof(ApiSettings)));
+            builder.Services.Configure<ApiClientSettings>(builder.Configuration.GetSection(nameof(ApiClientSettings)));
+        }
         else
+        {
             builder.Services.Configure<ApiSettings>(options =>
+                options.BaseAddress = Environment.GetEnvironmentVariable("ApiBaseAddress")!);
+
+            builder.Services.Configure<ApiClientSettings>(options =>
             {
-                options.BaseAddress = Environment.GetEnvironmentVariable("ApiBaseAddress")!;
+                options.BaseAddress = Environment.GetEnvironmentVariable("ApiClientBaseAddress")!;
                 options.EmailVerificationUrl =
                     Environment.GetEnvironmentVariable("EmailVerificationUrl")!;
                 options.PasswordResetUrl = Environment.GetEnvironmentVariable("PasswordResetUrl")!;
             });
+        }
+           
         
         return builder;
     }
@@ -194,7 +203,8 @@ public static partial class HostConfigurations
             .AddTransient<ITokenGeneratorService, TokenGeneratorService>()
             .AddTransient<IRefreshTokenGeneratorService, RefreshTokenGeneratorService>()
             .AddTransient<IVerificationTokenGeneratorService, VerificationTokenGeneratorService>()
-            .AddTransient<IPasswordHasherService, PasswordHasherService>();
+            .AddTransient<IPasswordHasherService, PasswordHasherService>()
+            .AddTransient<IPasswordGeneratorService, PasswordGeneratorService>();
 
         builder.Services
             .AddScoped<IRefreshTokenRepository, RefreshTokenRepository>()
@@ -338,9 +348,12 @@ public static partial class HostConfigurations
     
     private static WebApplicationBuilder AddCors(this WebApplicationBuilder builder)
     {
-        builder.Services.AddCors(options => options.AddPolicy("Policy",
+        var apiClientSettings = new ApiClientSettings();
+        builder.Configuration.GetSection(nameof(ApiClientSettings)).Bind(apiClientSettings);
+
+        builder.Services.AddCors(options => options.AddPolicy("AngularAppPolicy",
             policy => policy
-                .AllowAnyOrigin()
+                .WithOrigins(apiClientSettings.BaseAddress)
                 .AllowAnyHeader()
                 .AllowAnyMethod()));
 
@@ -377,10 +390,10 @@ public static partial class HostConfigurations
 
         return app;
     }
-    
+
     private static WebApplication UseCors(this WebApplication app)
     {
-        app.UseCors("Policy");
+        app.UseCors("AngularAppPolicy");
 
         return app;
     }

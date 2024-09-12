@@ -8,6 +8,8 @@ public class AdminConfiguration : IEntityTypeConfiguration<Admin>
 {
     public void Configure(EntityTypeBuilder<Admin> builder)
     {
+        builder.Property(admin => admin.TemporaryPasswordChanged).HasColumnName("TemporaryPasswordChanged");
+
         builder.HasOne<Admin>()
             .WithMany()
             .HasForeignKey(admin => admin.CreatedByUserId)

@@ -635,15 +635,11 @@ namespace Gymphony.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<bool>("TemporaryPasswordChanged")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasColumnType("boolean")
+                        .HasColumnName("TemporaryPasswordChanged");
 
                     b.HasIndex("CreatedByUserId");
-
-                    b.ToTable("Users", t =>
-                        {
-                            t.Property("TemporaryPasswordChanged")
-                                .HasColumnName("Admin_TemporaryPasswordChanged");
-                        });
 
                     b.HasDiscriminator().HasValue(0);
                 });
@@ -671,7 +667,9 @@ namespace Gymphony.Persistence.Migrations
                         .HasColumnType("character varying(2048)");
 
                     b.Property<bool>("TemporaryPasswordChanged")
-                        .HasColumnType("boolean");
+                        .ValueGeneratedOnUpdateSometimes()
+                        .HasColumnType("boolean")
+                        .HasColumnName("TemporaryPasswordChanged");
 
                     b.HasDiscriminator().HasValue(1);
                 });

@@ -32,12 +32,12 @@ public class CreateCourseScheduleCommandHandler(IMapper mapper,
             ?? throw new ArgumentException($"Course with id {request.CourseId} does not exist!");
 
         if (ScheduleTimeOverlaps(foundCourse.Schedules, newSchedule))
-            throw new ArgumentException("The new schedule time overlaps with an existing course schedule.");
+            throw new ArgumentException($"The new schedule time on {newSchedule.Day} overlaps with an existing course schedule.");
 
         var instructors = await staffRepository.GetByIdsAsync(request.InstructorsIds, cancellationToken);
 
         if (InstructorsScheduleTimeOverlaps(instructors, newSchedule))
-            throw new ArgumentException("The new schedule time overlaps with an instructor's existing schedule!");
+            throw new ArgumentException($"The new schedule time on {newSchedule.Day} overlaps with an instructor's existing schedule!");
 
         newSchedule.Instructors = instructors;
 
@@ -58,7 +58,7 @@ public class CreateCourseScheduleCommandHandler(IMapper mapper,
 
         foreach (var schedule in existingCourseSchedules)
         {
-            if (schedule.Day == newSchedule.Day 
+            if (schedule.Day == newSchedule.Day
                 && timeService.IsTimeOverlapping(schedule.StartTime, schedule.EndTime, newSchedule.StartTime, newSchedule.EndTime))
                 return true;
         }

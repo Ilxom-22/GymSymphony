@@ -10,7 +10,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
     public void Configure(EntityTypeBuilder<Product> builder)
     {
         builder.HasKey(product => product.Id);
-        
+
         builder.HasIndex(product => product.Name).IsUnique();
         builder.Property(plan => plan.Name).HasMaxLength(256);
         builder.Property(plan => plan.Description).IsRequired().HasMaxLength(2048);

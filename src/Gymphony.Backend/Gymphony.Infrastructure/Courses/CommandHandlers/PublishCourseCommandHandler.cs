@@ -20,7 +20,8 @@ public class PublishCourseCommandHandler(ICourseRepository courseRepository, IMa
         var foundCourse = await courseRepository.Get(course => course.Id == request.CourseId)
             .Include(course => course.Schedules)
             .Include(course => course.StripeDetails)
-            .Include(course => course.CourseImages)
+            .Include(course => course.CourseImages!)
+            .ThenInclude(course => course.StorageFile)
             .FirstOrDefaultAsync(cancellationToken)
             ?? throw new ArgumentException($"Course with id {request.CourseId} does not exist!");
 

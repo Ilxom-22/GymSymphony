@@ -29,7 +29,7 @@ public class PaymentsController(IMediator mediator,
     {
         var sessionUrl = await mediator.Send(createBillingPortalSessionCommand, cancellationToken);
 
-        return Ok(sessionUrl);
+        return Ok(new { sessionUrl });
     }
 
     [HttpPost("webhook")]

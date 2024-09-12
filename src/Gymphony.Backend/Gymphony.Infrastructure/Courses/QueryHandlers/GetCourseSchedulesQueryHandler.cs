@@ -34,13 +34,19 @@ public class GetCourseSchedulesQueryHandler(IMapper mapper,
                 Schedule = schedule,
                 Enrollments = schedule.Enrollments == null ? 0 : schedule.Enrollments.Count,
                 PendingEnrollments = schedule.PendingEnrollments == null ? 0 : schedule.PendingEnrollments.Count,
-                AllowedEnrollments = foundCourse.EnrollmentsCountPerWeek
+                AllowedEnrollments = foundCourse.Capacity
             })
             .AsEnumerable() 
             .Select(result => (
                 Schedule: result.Schedule,
-                IsAvailable: result.Enrollments + result.PendingEnrollments < result.AllowedEnrollments
+                Enrollments: result.Enrollments,
+                IsAvailable: (result.Enrollments + result.PendingEnrollments) < result.AllowedEnrollments
             ));
+
+        if (request.IsActiveOnly)
+        {
+            schedules = schedules.Where(schedule => schedule.IsAvailable);
+        }
 
         return mapper.Map<IEnumerable<CourseScheduleDto>>(schedules);
     }

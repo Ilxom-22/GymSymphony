@@ -7,6 +7,7 @@ using Gymphony.Domain.Common.Commands;
 using Gymphony.Domain.Entities;
 using Gymphony.Domain.Enums;
 using Gymphony.Persistence.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gymphony.Infrastructure.Courses.CommandHandlers;
 
@@ -24,7 +25,11 @@ public class UpdateDraftCourseCommandHandler(IMapper mapper,
         if (!validationResult.IsValid)
             throw new ArgumentException(validationResult.Errors[0].ToString());
 
-        var foundCourse = await courseRepository.GetByIdAsync(request.CourseId, cancellationToken: cancellationToken)
+        var foundCourse = await courseRepository
+                .Get(course => course.Id == request.CourseId)
+                .Include(course => course.CourseImages!)
+                .ThenInclude(course => course.StorageFile)
+                .FirstOrDefaultAsync(cancellationToken)
             ?? throw new ArgumentException($"Course with id {request.CourseId} does not exist!");
 
         if (foundCourse.Status != ContentStatus.Draft)

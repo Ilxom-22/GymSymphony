@@ -2,6 +2,7 @@ namespace Gymphony.Domain.Enums;
 
 public enum RuleSets
 {
-    EmailSignUp = 0,
-    ThirdPartySignUp = 1
+    AdminSignUp = 0,
+    EmailSignUp = 1,
+    ThirdPartySignUp = 2
 }

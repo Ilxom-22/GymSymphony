@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Gymphony.Application.Common.StorageFiles.Brokers;
 using Gymphony.Application.Common.StorageFiles.Models.Dtos;
 using Gymphony.Application.Common.StorageFiles.Models.Settings;
@@ -17,7 +18,12 @@ public class AzureBlobStorageBroker(BlobServiceClient blobServiceClient, IOption
     {
         var blobClient = CreateNewBlobClient(file);
 
-        await blobClient.UploadAsync(file.Source, cancellationToken);
+        var uploadOptions = new BlobUploadOptions
+        {
+            HttpHeaders = new BlobHttpHeaders { ContentType = file.ContentType }
+        };
+
+        await blobClient.UploadAsync(file.Source, uploadOptions, cancellationToken);
         
         return new StorageFile { FileName = blobClient.Name, Type = file.StorageFileType, Url = blobClient.Uri.AbsoluteUri };
     }

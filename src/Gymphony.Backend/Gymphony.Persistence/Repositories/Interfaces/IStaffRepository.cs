@@ -12,5 +12,11 @@ public interface IStaffRepository
 
     ValueTask<Staff> CreateAsync(Staff staff, bool saveChanges = true, CancellationToken cancellationToken = default);
 
+    ValueTask BeginTransactionAsync();
+
+    ValueTask CommitTransactionAsync();
+
+    ValueTask RollbackTransactionAsync();
+
     ValueTask<Staff> DeleteAsync(Staff staff, bool saveChanges = true, CancellationToken cancellationToken = default);
 }

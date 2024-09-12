@@ -16,5 +16,7 @@ public class MembershipPlanDto
 
     public DateOnly? ActivationDate { get; set; }
 
+    public DateOnly? DeactivationDate { get; set; }
+
     public decimal Price { get; set; }
 }

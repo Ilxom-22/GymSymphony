@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Gymphony.Application.Common.Identity.Models.Dtos;
 using Gymphony.Application.Common.StorageFiles.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

@@ -1,4 +1,5 @@
 using System.Security.Authentication;
+using Gymphony.Application.Common.Exceptions;
 using Gymphony.Domain.Brokers;
 using Gymphony.Domain.Common.Queries;
 using Gymphony.Domain.Enums;
@@ -55,7 +56,7 @@ public class AccessTokenValidationFilter(
             }
             
             if (user.Status == AccountStatus.Unverified)
-                throw new AuthenticationException("Verify your email address please!");
+                throw new AccountNotVerifiedException("Verify your email address please!");
         }
 
         await next();

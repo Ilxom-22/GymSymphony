@@ -4,7 +4,6 @@ using Gymphony.Application.Common.Payments.Brokers;
 using Gymphony.Application.Common.Payments.Commands;
 using Gymphony.Domain.Brokers;
 using Gymphony.Domain.Common.Commands;
-using Gymphony.Infrastructure.Common.Payments.Validators;
 using Gymphony.Persistence.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Stripe;

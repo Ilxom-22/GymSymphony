@@ -1,4 +1,5 @@
 using Gymphony.Application.Common.Identity.Commands;
+using Gymphony.Application.Common.Identity.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,8 +11,16 @@ namespace Gymphony.Api.Controllers;
 [Route("api/[controller]")]
 public class StaffController(IMediator mediator) : ControllerBase
 {
+    [HttpGet]
+    public async ValueTask<IActionResult> GetAllStaff(CancellationToken cancellationToken)
+    {
+        var result = await mediator.Send(new GetAllStaffQuery());
+
+        return Ok(result);
+    }
+
     [HttpPost("sign-up")]
-    public async ValueTask<IActionResult> AddStaffAsync([FromBody] StaffSignUpCommand staffSignUpCommand, CancellationToken cancellationToken)
+    public async ValueTask<IActionResult> AddStaffAsync([FromForm] StaffSignUpCommand staffSignUpCommand, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(staffSignUpCommand, cancellationToken);
         

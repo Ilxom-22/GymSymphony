@@ -22,7 +22,7 @@ public class RefreshTokenCommandHandler(
     public async Task<IdentityTokenDto> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(request.RefreshToken))
-            throw new ArgumentException("Invalid refresh token value!");
+            throw new ArgumentException("Invalid refresh token!");
 
         var refreshToken = await refreshTokenRepository.GetByValueAsync(request.RefreshToken, 
                                new QueryOptions(QueryTrackingMode.AsNoTracking))
@@ -68,7 +68,7 @@ public class RefreshTokenCommandHandler(
         if (removeAccessToken)
             await accessTokenRepository.DeleteByUserIdAsync(refreshToken.UserId);
         
-        throw new AuthenticationException("Invalid identity security token value!");
+        throw new AuthenticationException("Invalid identity security token!");
     }
 
     private async ValueTask<RefreshToken> GetNewRefreshToken(User user, CancellationToken cancellationToken = default)
