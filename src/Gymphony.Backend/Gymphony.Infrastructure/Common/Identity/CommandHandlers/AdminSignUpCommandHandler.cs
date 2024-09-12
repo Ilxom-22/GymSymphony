@@ -14,18 +14,20 @@ public class AdminSignUpCommandHandler(
     IMapper mapper,
     IAdminRepository adminRepository,
     IPasswordHasherService passwordHasherService, 
-    IEventBusBroker eventBusBroker) 
+    IPasswordGeneratorService passwordGeneratorService,
+    IEventBusBroker eventBusBroker)
     : ICommandHandler<AdminSignUpCommand, UserDto>
 {
     public async Task<UserDto> Handle(AdminSignUpCommand request, CancellationToken cancellationToken)
     {
         var adminData = mapper.Map<Admin>(request.SignUpDetails);
-        adminData.AuthDataHash = passwordHasherService.HashPassword(request.SignUpDetails.AuthData);
+        var temporaryGeneratedPassword = passwordGeneratorService.GeneratePassword(8);
+        adminData.AuthDataHash = passwordHasherService.HashPassword(temporaryGeneratedPassword);
         
         var admin = await adminRepository
             .CreateAsync(adminData, cancellationToken: cancellationToken);
         
-        await eventBusBroker.PublishLocalAsync(new AdminCreatedEvent { Admin = admin, TemporaryPassword = request.SignUpDetails.AuthData }, cancellationToken);
+        await eventBusBroker.PublishLocalAsync(new AdminCreatedEvent { Admin = admin, TemporaryPassword = temporaryGeneratedPassword }, cancellationToken);
 
         return mapper.Map<UserDto>(admin);
     }
