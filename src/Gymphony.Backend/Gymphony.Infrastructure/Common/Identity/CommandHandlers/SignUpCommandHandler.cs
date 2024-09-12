@@ -19,11 +19,19 @@ public class SignUpCommandHandler(
         if (await userRepository.UserExists(request.SignUpDetails.EmailAddress))
             throw new ValidationException("User with this email address is already registered!");
 
+        RuleSets passwordValidationRule;
+
+        if (request.Role == Role.Admin)
+            passwordValidationRule = RuleSets.AdminSignUp;
+        
+        else if (request.AuthProvider == Provider.EmailPassword)
+            passwordValidationRule = RuleSets.EmailSignUp;
+        else
+            passwordValidationRule = RuleSets.ThirdPartySignUp;
+
         var validationResult = await signUpDetailsValidator
             .ValidateAsync(request.SignUpDetails, options =>
-                options.IncludeRuleSets(request.AuthProvider == Provider.EmailPassword
-                    ? RuleSets.EmailSignUp.ToString()
-                    : RuleSets.ThirdPartySignUp.ToString()).IncludeRulesNotInRuleSet(), 
+                options.IncludeRuleSets(passwordValidationRule.ToString()).IncludeRulesNotInRuleSet(), 
                 cancellationToken);
 
         if (!validationResult.IsValid)

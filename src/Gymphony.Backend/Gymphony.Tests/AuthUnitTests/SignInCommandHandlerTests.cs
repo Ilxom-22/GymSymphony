@@ -49,7 +49,7 @@ public class SignInCommandHandlerTests
     }
 
     [Fact]
-    public async Task Handle_ShouldThrowAuthenticationException_WhenUserNotFound()
+    public async Task Handle_ShouldThrowArgumentException_WhenUserNotFound()
     {
         // Arrange
         var signInDetails = new SignInDetails { EmailAddress = _faker.Internet.Email(), AuthData = _faker.Internet.Password() };
@@ -62,7 +62,7 @@ public class SignInCommandHandlerTests
         Func<Task> act = () => _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        await act.Should().ThrowAsync<AuthenticationException>()
+        await act.Should().ThrowAsync<ArgumentException>()
             .WithMessage("Provided login details are invalid! Please, try again!");
     }
 

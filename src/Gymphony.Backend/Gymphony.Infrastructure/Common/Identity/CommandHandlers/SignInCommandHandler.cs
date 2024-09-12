@@ -40,7 +40,7 @@ public class SignInCommandHandler(
                             .Include(user => user.AccessToken)
                             .Include(user => user.RefreshToken)
                             .FirstOrDefaultAsync(cancellationToken)
-                        ?? throw new AuthenticationException("Provided login details are invalid! Please, try again!");
+                        ?? throw new ArgumentException("Provided login details are invalid! Please, try again!");
 
         if (!passwordHasherService.ValidatePassword(signInDetails.AuthData, foundUser.AuthDataHash))
             throw new ValidationException("Provided login details are invalid! Please, try again!");
