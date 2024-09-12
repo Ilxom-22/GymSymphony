@@ -21,6 +21,16 @@ public class CoursesController(IMediator mediator) : ControllerBase
         return Ok(result);
     }
 
+    [AllowAnonymous]
+    [HttpGet("{courseId:guid}")]
+    public async ValueTask<IActionResult> GetPublicCourseById(Guid courseId, CancellationToken cancellationToken)
+    {
+        var query = new GetPublicCourseByIdQuery() { CourseId = courseId };
+        var result = await mediator.Send(query, cancellationToken);
+
+        return Ok(result);
+    }
+
     [HttpGet("all")]
     public async ValueTask<IActionResult> GetAllCourses(CancellationToken cancellationToken)
     {
@@ -38,7 +48,7 @@ public class CoursesController(IMediator mediator) : ControllerBase
     }
 
     [HttpPost]
-    public async ValueTask<IActionResult> CreateCourseAsync([FromBody] DraftCourseDto course, CancellationToken cancellationToken)
+    public async ValueTask<IActionResult> CreateCourseAsync([FromForm] DraftCourseDto course, CancellationToken cancellationToken)
     {
         var result = await mediator.Send(new CreateCourseCommand { Course = course }, cancellationToken);
 
