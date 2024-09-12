@@ -21,8 +21,11 @@ public class DeactivateMembershipPlanCommandHandler(IMapper mapper,
                  .FirstOrDefaultAsync(cancellationToken)
              ?? throw new ArgumentException($"Membership Plan with Id {request.MembershipPlanId} does not exist!");
 
-        if (membershipPlan.Subscriptions is null)
+        if (membershipPlan.Subscriptions is null || membershipPlan.Subscriptions.Count == 0)
+        {
             membershipPlan.Status = ContentStatus.Draft;
+            membershipPlan.ActivationDate = null;
+        }
         else
         {
             var subscriptionWithMaxExpiryDate = membershipPlan.Subscriptions
@@ -31,7 +34,10 @@ public class DeactivateMembershipPlanCommandHandler(IMapper mapper,
                 .Max();
 
             if (subscriptionWithMaxExpiryDate is null)
+            {
                 membershipPlan.Status = ContentStatus.Deactivated;
+                membershipPlan.DeactivationDate = DateOnly.FromDateTime(DateTime.UtcNow);
+            }
             else
             {
                 membershipPlan.Status = ContentStatus.DeactivationRequested;

@@ -22,7 +22,7 @@ public class CreateMembershipPlanCommandHandler(IMapper mapper,
         if (!validationResult.IsValid)
             throw new ArgumentException(validationResult.Errors[0].ToString());
 
-        if (await membershipPlanRepository.MembershipPlanExistsAsync(request.MembershipPlan.Name, cancellationToken))
+        if (await membershipPlanRepository.MembershipPlanExistsAsync(request.MembershipPlan.Name, cancellationToken: cancellationToken))
             throw new ArgumentException($"Membership plan with name '{request.MembershipPlan.Name}' already exists!");
 
         var membershipPlan = mapper.Map<MembershipPlan>(request.MembershipPlan);

@@ -24,7 +24,10 @@ public class UpdateDraftMembershipPlanCommandHandler(IMapper mapper,
 
         if (!validationResult.IsValid)
             throw new ArgumentException(validationResult.Errors[0].ToString());
-        
+
+        if (await membershipPlanRepository.MembershipPlanExistsAsync(request.Name, request.MembershipPlanId, cancellationToken))
+            throw new ArgumentException($"Membership plan with name '{request.Name}' already exists!");
+
         var foundPlan = await membershipPlanRepository
             .GetByIdAsync(request.MembershipPlanId, cancellationToken: cancellationToken)
             ?? throw new ArgumentException($"Membership plan with id '{request.MembershipPlanId}' does not exist!");
