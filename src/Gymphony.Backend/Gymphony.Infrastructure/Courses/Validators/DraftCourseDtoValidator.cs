@@ -18,16 +18,19 @@ public class DraftCourseDtoValidator : AbstractValidator<DraftCourseDto>
 
         RuleFor(course => course.DurationUnit)
             .NotNull()
+            .WithMessage("Duration Period can't be empty!")
             .Must(BeEnum)
-            .WithMessage("DurationUnit must me an enum!");
+            .WithMessage("Duration Unit must me an enum!");
 
         RuleFor(course => course.DurationCount)
             .NotNull()
-            .GreaterThan(byte.MinValue);
+            .WithMessage("Number of Periods can't be empty!")
+            .GreaterThan(byte.MinValue)
+            .WithMessage("Number of Periods should be greater than 0!");
 
         RuleFor(course => course.Price)
             .NotNull()
-            .GreaterThan(decimal.One);
+            .GreaterThan(decimal.Zero);
 
         RuleFor(course => course.Capacity)
             .NotEmpty()
@@ -35,13 +38,19 @@ public class DraftCourseDtoValidator : AbstractValidator<DraftCourseDto>
 
         RuleFor(course => course.SessionDurationInMinutes)
             .NotEmpty()
+            .WithMessage("Session Duration can't be empty.")
             .GreaterThan(10)
-            .LessThan(500);
+            .WithMessage("Session Duration should be greater than 10.")
+            .LessThan(500)
+            .WithMessage("Session Duration should be less than 500.");
 
         RuleFor(course => course.EnrollmentsCountPerWeek)
             .NotEmpty()
-            .GreaterThan(1)
-            .LessThan(7);
+            .WithMessage("Minimum sessions count per week should not be empty.")
+            .GreaterThan(0)
+            .WithMessage("Minimum sessions count per week should be greater than 0.")
+            .LessThan(8)
+            .WithMessage("Minimum sessions count per week should be less than 8.");
     }
 
     private bool BeEnum(string durationUnit) =>
