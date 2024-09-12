@@ -35,5 +35,7 @@ public class CourseScheduleConfiguration : IEntityTypeConfiguration<CourseSchedu
             .WithMany()
             .HasForeignKey(cs => cs.DeletedByUserId)
             .OnDelete(DeleteBehavior.SetNull);
+
+        builder.HasQueryFilter(cs => !cs.IsDeleted);
     }
 }

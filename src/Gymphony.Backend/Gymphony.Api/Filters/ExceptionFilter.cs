@@ -37,6 +37,10 @@ public class ExceptionFilter : IExceptionFilter
         {
             typeof(InvalidEntityStateChangeException<>),
             new ProblemDetails { Status = StatusCodes.Status422UnprocessableEntity }
+        },
+        {
+            typeof(AccountNotVerifiedException),
+            new ProblemDetails { Status = StatusCodes.Status403Forbidden }
         }
     };
 
