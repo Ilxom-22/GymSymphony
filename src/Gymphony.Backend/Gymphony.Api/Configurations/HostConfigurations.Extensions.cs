@@ -203,7 +203,8 @@ public static partial class HostConfigurations
             .AddTransient<ITokenGeneratorService, TokenGeneratorService>()
             .AddTransient<IRefreshTokenGeneratorService, RefreshTokenGeneratorService>()
             .AddTransient<IVerificationTokenGeneratorService, VerificationTokenGeneratorService>()
-            .AddTransient<IPasswordHasherService, PasswordHasherService>();
+            .AddTransient<IPasswordHasherService, PasswordHasherService>()
+            .AddTransient<IPasswordGeneratorService, PasswordGeneratorService>();
 
         builder.Services
             .AddScoped<IRefreshTokenRepository, RefreshTokenRepository>()
@@ -389,7 +390,7 @@ public static partial class HostConfigurations
 
         return app;
     }
-    
+
     private static WebApplication UseCors(this WebApplication app)
     {
         app.UseCors("AngularAppPolicy");

@@ -31,7 +31,9 @@ public static partial class HostConfigurations
         app
             .UseCors()
             .UseDevTools()
-            .UseExposers();
+            .UseExposers()
+            .UseAuthentication()
+            .UseAuthorization();
 
         await app.MigrateDatabaseSchemaAsync();
         await app.SeedDataAsync();
